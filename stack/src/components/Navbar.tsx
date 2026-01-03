@@ -2,6 +2,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import NotificationBell from "./NotificationBell";
 
 // const User = {
 //   _id: "1",
@@ -53,7 +54,7 @@ const Navbar = ({ handleslidein }: any) => {
           </form>
         </div>
         <div className="flex items-center gap-2">
-           {!hasMounted ? null : !user ? (
+          {!hasMounted ? null : !user ? (
             <Link
               href="/auth"
               className="text-sm font-medium text-[#454545] bg-[#e7f8fe] hover:bg-[#d3e4eb] border border-blue-500 px-4 py-1.5 rounded transition"
@@ -62,6 +63,8 @@ const Navbar = ({ handleslidein }: any) => {
             </Link>
           ) : (
             <>
+              <NotificationBell />
+
               <Link
                 href={`/users/${user._id}`}
                 className="flex items-center justify-center bg-orange-600 text-white text-sm font-semibold w-9 h-9 rounded-full"

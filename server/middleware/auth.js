@@ -6,7 +6,11 @@ const auth = (req, res, next) => {
     req.userid = decodedata?.id;
     next();
   } catch (error) {
-    console.log(error);
+    console.log("Auth error:", error.message);
+    return res.status(401).json({
+      success: false,
+      message: "Authentication failed. Please log in again.",
+    });
   }
 };
 export default auth
