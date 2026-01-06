@@ -4,23 +4,37 @@
         "questions": "问题",
         "tags": "标签",
         "users": "用户",
-        "aiAssist": "AI助手",
+        "aiAssist": "AI 助手",
         "publicSpace": "公共空间",
         "subscription": "订阅",
         "login": "登录",
         "signup": "注册",
-        "logout": "登出",
+        "logout": "退出",
         "profile": "个人资料",
         "points": "积分",
-        "notifications": "通知"
+        "notifications": "通知",
+        "about": "关于",
+        "products": "产品",
+        "forTeams": "团队版"
     },
     "home": {
         "title": "热门问题",
         "askQuestion": "提问",
+        "questionsCount": "个问题",
+        "noQuestions": "未找到问题。",
+        "aiAssist": {
+            "greeting": "你好 {{name}}，今天你想学什么？",
+            "defaultName": "朋友",
+            "description": "使用 AI 助手获取即时答案，基于社区验证的知识。",
+            "placeholder": "开始与 AI 助手聊天..."
+        },
         "filter": {
             "newest": "最新",
             "active": "活跃",
             "unanswered": "未回答",
+            "bountied": "悬赏",
+            "more": "更多",
+            "filter": "筛选",
             "votes": "投票"
         }
     },
@@ -28,6 +42,7 @@
         "title": "所有问题",
         "askQuestion": "提问",
         "views": "浏览",
+        "answer": "回答",
         "answers": "回答",
         "votes": "投票",
         "asked": "提问于",
@@ -36,8 +51,8 @@
     },
     "questionDetail": {
         "answers": "回答",
-        "yourAnswer": "您的回答",
-        "postAnswer": "发布您的回答",
+        "yourAnswer": "你的回答",
+        "postAnswer": "发布你的回答",
         "upvote": "赞成",
         "downvote": "反对",
         "share": "分享",
@@ -47,25 +62,25 @@
     "askQuestion": {
         "title": "提出公开问题",
         "titleLabel": "标题",
-        "titlePlaceholder": "具体说明，想象您正在向另一个人提问",
+        "titlePlaceholder": "具体说明，想象你在向另一个人提问",
         "bodyLabel": "正文",
-        "bodyPlaceholder": "包含回答您的问题所需的所有信息",
+        "bodyPlaceholder": "包含回答你的问题所需的所有信息",
         "tagsLabel": "标签",
-        "tagsPlaceholder": "添加最多5个标签来描述您的问题",
-        "submit": "发布您的问题",
+        "tagsPlaceholder": "添加最多 5 个标签来描述你的问题",
+        "submit": "发布你的问题",
         "cancel": "取消"
     },
     "tags": {
         "title": "标签",
-        "description": "标签是将您的问题与其他类似问题分类的关键词或标签。",
+        "description": "标签是将你的问题与其他类似问题分类的关键词或标签。",
         "search": "按标签名称筛选",
-        "questions": "问题"
+        "questions": "个问题"
     },
     "users": {
         "title": "用户",
         "search": "搜索用户...",
-        "reputation": "声誉",
-        "joined": "加入"
+        "reputation": "声望",
+        "joined": "加入于"
     },
     "profile": {
         "about": "关于",
@@ -74,8 +89,8 @@
         "answers": "回答",
         "tags": "标签",
         "points": "积分",
-        "reputation": "声誉",
-        "joined": "加入",
+        "reputation": "声望",
+        "joined": "加入于",
         "editProfile": "编辑个人资料",
         "transferPoints": "转移积分",
         "transactions": "交易历史",
@@ -84,23 +99,23 @@
         "noTags": "还没有标签"
     },
     "aiAssist": {
-        "title": "AI助手",
-        "subtitle": "立即获得编程问题的帮助",
+        "title": "AI 助手",
+        "subtitle": "获取编程问题的即时帮助",
         "placeholder": "问我任何关于编程的问题...",
         "send": "发送",
         "thinking": "思考中...",
         "error": "获取响应失败。请重试。",
         "examples": {
-            "title": "尝试询问:",
-            "1": "什么是React?",
-            "2": "如何使用useState?",
-            "3": "解释JavaScript中的async/await"
+            "title": "试着问：",
+            "1": "什么是 React？",
+            "2": "如何使用 useState？",
+            "3": "解释 JavaScript 中的 async/await"
         }
     },
     "publicSpace": {
         "title": "公共空间",
         "createPost": "创建帖子",
-        "whatsOnYourMind": "您在想什么?",
+        "whatsOnYourMind": "你在想什么？",
         "postButton": "发布",
         "like": "点赞",
         "comment": "评论",
@@ -112,7 +127,7 @@
         "uploadVideo": "上传视频"
     },
     "subscription": {
-        "title": "选择您的计划",
+        "title": "选择你的计划",
         "free": "免费",
         "bronze": "青铜",
         "silver": "白银",
@@ -120,7 +135,7 @@
         "currentPlan": "当前计划",
         "subscribe": "订阅",
         "questionsPerDay": "每天问题数",
-        "unlimited": "无限",
+        "unlimited": "无限制",
         "features": "功能",
         "price": "价格"
     },
@@ -136,13 +151,13 @@
     "auth": {
         "login": "登录",
         "signup": "注册",
-        "email": "电子邮件",
+        "email": "邮箱",
         "password": "密码",
         "name": "姓名",
         "confirmPassword": "确认密码",
-        "forgotPassword": "忘记密码?",
-        "dontHaveAccount": "没有账户?",
-        "alreadyHaveAccount": "已有账户?",
+        "forgotPassword": "忘记密码？",
+        "dontHaveAccount": "还没有账户？",
+        "alreadyHaveAccount": "已有账户？",
         "loginButton": "登录",
         "signupButton": "注册"
     },
@@ -166,13 +181,13 @@
     },
     "errors": {
         "required": "此字段为必填项",
-        "invalidEmail": "无效的电子邮件地址",
+        "invalidEmail": "无效的邮箱地址",
         "passwordMismatch": "密码不匹配",
-        "minLength": "最小长度为{{min}}个字符",
-        "maxLength": "最大长度为{{max}}个字符",
+        "minLength": "最小长度为 {{min}} 个字符",
+        "maxLength": "最大长度为 {{max}} 个字符",
         "networkError": "网络错误。请重试。",
         "serverError": "服务器错误。请稍后重试。",
-        "unauthorized": "您无权执行此操作",
+        "unauthorized": "你无权执行此操作",
         "notFound": "未找到资源"
     },
     "language": {
@@ -184,13 +199,36 @@
         "french": "Français",
         "chinese": "中文",
         "verificationRequired": "需要验证",
-        "enterOTP": "输入OTP",
-        "otpSentTo": "OTP已发送到您的{{channel}}",
+        "enterOTP": "输入 OTP",
+        "otpSentTo": "OTP 已发送到你的 {{channel}}",
         "verifyAndSwitch": "验证并切换",
-        "resendOTP": "重新发送OTP",
-        "otpExpired": "OTP已过期。请请求新的。",
-        "invalidOTP": "无效的OTP。请重试。",
-        "languageChanged": "语言更改成功",
-        "switchingTo": "正在切换到{{language}}..."
+        "resendOTP": "重新发送 OTP",
+        "otpExpired": "OTP 已过期。请请求新的。",
+        "invalidOTP": "无效的 OTP。请重试。",
+        "languageChanged": "语言已成功更改",
+        "switchingTo": "正在切换到 {{language}}..."
+    },
+    "sidebar": {
+        "labs": "实验室",
+        "saves": "已保存",
+        "challenges": "挑战",
+        "new": "新",
+        "chat": "聊天",
+        "articles": "文章",
+        "companies": "公司"
+    },
+    "rightSidebar": {
+        "overflowBlog": "Overflow 博客",
+        "featuredOnMeta": "Meta 精选",
+        "customFilters": "自定义过滤器",
+        "createCustomFilter": "创建自定义过滤器",
+        "watchedTags": "关注的标签",
+        "watchTagsDescription": "关注标签以整理您的问题列表。",
+        "watchATag": "关注标签",
+        "blog1": "Stack Overflow 的新时代",
+        "blog2": "您最喜欢的电影如何改变语言学习技术",
+        "meta1": "2025年6月社区提问冲刺结果",
+        "meta2": "您会帮助我们建立新的视觉形象吗？",
+        "meta3": "政策：禁止使用生成式 AI（例如 ChatGPT）"
     }
 }
