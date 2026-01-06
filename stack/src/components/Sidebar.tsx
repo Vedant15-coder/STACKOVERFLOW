@@ -13,10 +13,18 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Badge } from "./ui/badge";
 
 const Sidebar = ({ isopen }: any) => {
+  const { t } = useTranslation();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   return (
     <div>
       <aside
@@ -33,7 +41,7 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <Home className="w-4 h-4 mr-2 lg:mr-3" />
-                Home
+                {hasMounted ? t('nav.home') : 'Home'}
               </Link>
             </li>
             <li>
@@ -42,7 +50,7 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <MessageSquareIcon className="w-4 h-4 mr-2 lg:mr-3" />
-                Questions
+                {hasMounted ? t('nav.questions') : 'Questions'}
               </Link>
             </li>
             <li>
@@ -51,7 +59,7 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <Image className="w-4 h-4 mr-2 lg:mr-3" />
-                Public Space
+                {hasMounted ? t('nav.publicSpace') : 'Public Space'}
               </Link>
             </li>
             <li>
@@ -60,9 +68,9 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <Bot className="w-4 h-4 mr-2 lg:mr-3" />
-                AI Assist
+                {hasMounted ? t('nav.aiAssist') : 'AI Assist'}
                 <Badge variant="secondary" className="ml-auto text-xs">
-                  Labs
+                  {hasMounted ? t('sidebar.labs') : 'Labs'}
                 </Badge>
               </Link>
             </li>
@@ -72,7 +80,7 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <Tag className="w-4 h-4 mr-2 lg:mr-3" />
-                Tags
+                {hasMounted ? t('nav.tags') : 'Tags'}
               </Link>
             </li>
             <li>
@@ -81,7 +89,7 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <Users className="w-4 h-4 mr-2 lg:mr-3" />
-                Users
+                {hasMounted ? t('nav.users') : 'Users'}
               </Link>
             </li>
             <li>
@@ -90,7 +98,7 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <Bookmark className="w-4 h-4 mr-2 lg:mr-3" />
-                Saves
+                {hasMounted ? t('sidebar.saves') : 'Saves'}
               </Link>
             </li>
             <li>
@@ -99,12 +107,12 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <Trophy className="w-4 h-4 mr-2 lg:mr-3" />
-                Challenges
+                {hasMounted ? t('sidebar.challenges') : 'Challenges'}
                 <Badge
                   variant="secondary"
                   className="ml-auto text-xs bg-orange-100 text-orange-800"
                 >
-                  NEW
+                  {hasMounted ? t('sidebar.new') : 'NEW'}
                 </Badge>
               </Link>
             </li>
@@ -114,7 +122,7 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <MessageSquare className="w-4 h-4 mr-2 lg:mr-3" />
-                Chat
+                {hasMounted ? t('sidebar.chat') : 'Chat'}
               </Link>
             </li>
             <li>
@@ -123,7 +131,7 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <FileText className="w-4 h-4 mr-2 lg:mr-3" />
-                Articles
+                {hasMounted ? t('sidebar.articles') : 'Articles'}
               </Link>
             </li>
 
@@ -133,7 +141,7 @@ const Sidebar = ({ isopen }: any) => {
                 className="flex items-center px-2 py-2 text-gray-700 hover:bg-gray-100 rounded text-sm"
               >
                 <Building className="w-4 h-4 mr-2 lg:mr-3" />
-                Companies
+                {hasMounted ? t('sidebar.companies') : 'Companies'}
               </Link>
             </li>
           </ul>

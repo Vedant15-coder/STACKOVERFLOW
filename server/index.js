@@ -10,6 +10,9 @@ import publicspaceroutes from "./routes/publicspace.js"
 import friendroutes from "./routes/friend.js"
 import notificationroutes from "./routes/notification.js"
 import forgotPasswordRoutes from "./routes/forgotPassword.js"
+import subscriptionRoutes from "./routes/subscription.js"
+import rewardRoutes from "./routes/reward.js"
+import languageRoutes from "./routes/language.js"
 const app = express();
 dotenv.config();
 app.use(express.json({ limit: "30mb", extended: true }));
@@ -33,6 +36,9 @@ app.use('/gemini', geminiroutes)
 app.use('/public', publicspaceroutes)
 app.use('/friend', friendroutes)
 app.use('/notification', notificationroutes)
+app.use('/api/subscription', subscriptionRoutes)
+app.use('/api/rewards', rewardRoutes)
+app.use('/api/language', languageRoutes)
 
 const PORT = process.env.PORT || 5000;
 const databaseurl = process.env.MONGODB_URL;

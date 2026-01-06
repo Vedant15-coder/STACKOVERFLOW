@@ -7,8 +7,10 @@ import { ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
+  const { t } = useTranslation();
   const [question, setquestion] = useState<any>(null);
   const [loading, setloading] = useState(true);
   const [aiQuestion, setAiQuestion] = useState("");
@@ -63,10 +65,10 @@ export default function Home() {
             </div>
             <div className="flex-1">
               <h2 className="text-xl font-semibold mb-1">
-                Hey {user?.name || "there"}, what do you want to learn today?
+                {t('home.aiAssist.greeting', { name: user?.name || t('home.aiAssist.defaultName') })}
               </h2>
               <p className="text-sm text-gray-600">
-                Get instant answers with AI Assist, grounded in community-verified knowledge.
+                {t('home.aiAssist.description')}
               </p>
             </div>
           </div>
@@ -76,7 +78,7 @@ export default function Home() {
               type="text"
               value={aiQuestion}
               onChange={(e) => setAiQuestion(e.target.value)}
-              placeholder="Start a chat with AI Assist..."
+              placeholder={t('home.aiAssist.placeholder')}
               className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             />
             <button
@@ -103,48 +105,48 @@ export default function Home() {
 
         {/* Questions Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-xl lg:text-2xl font-semibold">Top Questions</h1>
+          <h1 className="text-xl lg:text-2xl font-semibold">{t('home.title')}</h1>
           <button
             onClick={() => router.push("/ask")}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium whitespace-nowrap"
           >
-            Ask Question
+            {t('home.askQuestion')}
           </button>
         </div>
 
         <div className="w-full">
           <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 text-sm gap-2 sm:gap-4">
             <span className="text-gray-600">
-              {question?.length || 0} questions
+              {question?.length || 0} {t('home.questionsCount', { count: question?.length || 0 })}
             </span>
             <div className="flex flex-wrap gap-1 sm:gap-2">
               <button className="px-2 sm:px-3 py-1 bg-gray-200 text-gray-700 rounded text-xs sm:text-sm">
-                Newest
+                {t('home.filter.newest')}
               </button>
               <button className="px-2 sm:px-3 py-1 text-gray-600 hover:bg-gray-100 rounded text-xs sm:text-sm">
-                Active
+                {t('home.filter.active')}
               </button>
               <button className="px-2 sm:px-3 py-1 text-gray-600 hover:bg-gray-100 rounded flex items-center text-xs sm:text-sm">
-                Bountied
+                {t('home.filter.bountied')}
                 <Badge variant="secondary" className="ml-1 text-xs">
                   25
                 </Badge>
               </button>
               <button className="px-2 sm:px-3 py-1 text-gray-600 hover:bg-gray-100 rounded text-xs sm:text-sm">
-                Unanswered
+                {t('home.filter.unanswered')}
               </button>
               <button className="px-2 sm:px-3 py-1 text-gray-600 hover:bg-gray-100 rounded text-xs sm:text-sm">
-                More ▼
+                {t('home.filter.more')} ▼
               </button>
               <button className="px-2 sm:px-3 py-1 border border-gray-300 text-gray-600 hover:bg-gray-50 rounded ml-auto text-xs sm:text-sm">
-                🔍 Filter
+                🔍 {t('home.filter.filter')}
               </button>
             </div>
           </div>
 
           {!question || question.length === 0 ? (
             <div className="text-center text-gray-500 mt-8 p-8 border border-gray-200 rounded-lg">
-              No questions found.
+              {t('home.noQuestions')}
             </div>
           ) : (
             <div className="space-y-4">
@@ -154,19 +156,19 @@ export default function Home() {
                     <div className="flex sm:flex-col items-center sm:items-center text-sm text-gray-600 sm:w-16 lg:w-20 gap-4 sm:gap-2">
                       <div className="text-center">
                         <div className="font-medium">{q.upvote.length}</div>
-                        <div className="text-xs">votes</div>
+                        <div className="text-xs">{t('questions.votes')}</div>
                       </div>
                       <div className="text-center">
                         <div
                           className={`font-medium ${q.answer.length > 0
-                              ? "text-green-600 bg-green-100 px-2 py-1 rounded"
-                              : ""
+                            ? "text-green-600 bg-green-100 px-2 py-1 rounded"
+                            : ""
                             }`}
                         >
                           {q.noofanswer}
                         </div>
                         <div className="text-xs">
-                          {q.noofanswer === 1 ? "answer" : "answers"}
+                          {q.noofanswer === 1 ? t('questions.answer') : t('questions.answers')}
                         </div>
                       </div>
                     </div>
@@ -211,7 +213,7 @@ export default function Home() {
                           </Link>
 
                           <span>
-                            asked {new Date(q.askedon).toLocaleDateString()}
+                            {t('questions.asked')} {new Date(q.askedon).toLocaleDateString()}
                           </span>
                         </div>
                       </div>

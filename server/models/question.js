@@ -17,6 +17,10 @@ const questionschema = mongoose.Schema(
         useranswered: String,
         userid: String,
         answeredon: { type: Date, default: Date.now },
+        // Reward System fields (backward-compatible with defaults)
+        upvotes: { type: [String], default: [] },
+        downvotes: { type: [String], default: [] },
+        upvoteRewardGiven: { type: Boolean, default: false },
       },
     ],
   },

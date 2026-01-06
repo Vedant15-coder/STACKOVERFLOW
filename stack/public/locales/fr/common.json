@@ -1,0 +1,196 @@
+{
+    "nav": {
+        "home": "Accueil",
+        "questions": "Questions",
+        "tags": "Tags",
+        "users": "Utilisateurs",
+        "aiAssist": "Assistant IA",
+        "publicSpace": "Espace Public",
+        "subscription": "Abonnement",
+        "login": "Se connecter",
+        "signup": "S'inscrire",
+        "logout": "Se déconnecter",
+        "profile": "Profil",
+        "points": "Points",
+        "notifications": "Notifications"
+    },
+    "home": {
+        "title": "Principales Questions",
+        "askQuestion": "Poser une Question",
+        "filter": {
+            "newest": "Plus récentes",
+            "active": "Actives",
+            "unanswered": "Sans réponse",
+            "votes": "Votes"
+        }
+    },
+    "questions": {
+        "title": "Toutes les Questions",
+        "askQuestion": "Poser une Question",
+        "views": "vues",
+        "answers": "réponses",
+        "votes": "votes",
+        "asked": "demandé",
+        "noQuestions": "Aucune question trouvée",
+        "search": "Rechercher des questions..."
+    },
+    "questionDetail": {
+        "answers": "Réponses",
+        "yourAnswer": "Votre Réponse",
+        "postAnswer": "Publier Votre Réponse",
+        "upvote": "Vote positif",
+        "downvote": "Vote négatif",
+        "share": "Partager",
+        "delete": "Supprimer",
+        "edit": "Modifier"
+    },
+    "askQuestion": {
+        "title": "Poser une Question Publique",
+        "titleLabel": "Titre",
+        "titlePlaceholder": "Soyez précis et imaginez que vous posez une question à une autre personne",
+        "bodyLabel": "Corps",
+        "bodyPlaceholder": "Incluez toutes les informations dont quelqu'un aurait besoin pour répondre à votre question",
+        "tagsLabel": "Tags",
+        "tagsPlaceholder": "Ajoutez jusqu'à 5 tags pour décrire de quoi parle votre question",
+        "submit": "Publier Votre Question",
+        "cancel": "Annuler"
+    },
+    "tags": {
+        "title": "Tags",
+        "description": "Un tag est un mot-clé ou une étiquette qui catégorise votre question avec d'autres questions similaires.",
+        "search": "Filtrer par nom de tag",
+        "questions": "questions"
+    },
+    "users": {
+        "title": "Utilisateurs",
+        "search": "Rechercher des utilisateurs...",
+        "reputation": "réputation",
+        "joined": "rejoint"
+    },
+    "profile": {
+        "about": "À propos",
+        "stats": "Statistiques",
+        "questions": "Questions",
+        "answers": "Réponses",
+        "tags": "Tags",
+        "points": "Points",
+        "reputation": "Réputation",
+        "joined": "Rejoint",
+        "editProfile": "Modifier le Profil",
+        "transferPoints": "Transférer des Points",
+        "transactions": "Historique des Transactions",
+        "noQuestions": "Pas encore de questions",
+        "noAnswers": "Pas encore de réponses",
+        "noTags": "Pas encore de tags"
+    },
+    "aiAssist": {
+        "title": "Assistant IA",
+        "subtitle": "Obtenez une aide instantanée avec vos questions de programmation",
+        "placeholder": "Posez-moi n'importe quoi sur la programmation...",
+        "send": "Envoyer",
+        "thinking": "Réflexion...",
+        "error": "Échec de l'obtention de la réponse. Veuillez réessayer.",
+        "examples": {
+            "title": "Essayez de demander:",
+            "1": "Qu'est-ce que React?",
+            "2": "Comment utiliser useState?",
+            "3": "Expliquez async/await en JavaScript"
+        }
+    },
+    "publicSpace": {
+        "title": "Espace Public",
+        "createPost": "Créer une Publication",
+        "whatsOnYourMind": "À quoi pensez-vous?",
+        "postButton": "Publier",
+        "like": "J'aime",
+        "comment": "Commenter",
+        "share": "Partager",
+        "comments": "Commentaires",
+        "writeComment": "Écrire un commentaire...",
+        "noPosts": "Pas encore de publications",
+        "uploadImage": "Télécharger une Image",
+        "uploadVideo": "Télécharger une Vidéo"
+    },
+    "subscription": {
+        "title": "Choisissez Votre Plan",
+        "free": "Gratuit",
+        "bronze": "Bronze",
+        "silver": "Argent",
+        "gold": "Or",
+        "currentPlan": "Plan Actuel",
+        "subscribe": "S'abonner",
+        "questionsPerDay": "questions par jour",
+        "unlimited": "Illimité",
+        "features": "Fonctionnalités",
+        "price": "Prix"
+    },
+    "rewards": {
+        "points": "Points",
+        "transactions": "Transactions",
+        "transfer": "Transférer",
+        "history": "Historique",
+        "earned": "Gagné",
+        "spent": "Dépensé",
+        "balance": "Solde"
+    },
+    "auth": {
+        "login": "Connexion",
+        "signup": "Inscription",
+        "email": "E-mail",
+        "password": "Mot de passe",
+        "name": "Nom",
+        "confirmPassword": "Confirmer le Mot de passe",
+        "forgotPassword": "Mot de passe oublié?",
+        "dontHaveAccount": "Vous n'avez pas de compte?",
+        "alreadyHaveAccount": "Vous avez déjà un compte?",
+        "loginButton": "Se connecter",
+        "signupButton": "S'inscrire"
+    },
+    "common": {
+        "loading": "Chargement...",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "edit": "Modifier",
+        "close": "Fermer",
+        "submit": "Soumettre",
+        "search": "Rechercher",
+        "filter": "Filtrer",
+        "sort": "Trier",
+        "yes": "Oui",
+        "no": "Non",
+        "confirm": "Confirmer",
+        "success": "Succès",
+        "error": "Erreur",
+        "warning": "Avertissement"
+    },
+    "errors": {
+        "required": "Ce champ est obligatoire",
+        "invalidEmail": "Adresse e-mail invalide",
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "minLength": "La longueur minimale est de {{min}} caractères",
+        "maxLength": "La longueur maximale est de {{max}} caractères",
+        "networkError": "Erreur réseau. Veuillez réessayer.",
+        "serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+        "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action",
+        "notFound": "Ressource non trouvée"
+    },
+    "language": {
+        "selectLanguage": "Sélectionner la Langue",
+        "english": "English",
+        "hindi": "हिन्दी",
+        "spanish": "Español",
+        "portuguese": "Português",
+        "french": "Français",
+        "chinese": "中文",
+        "verificationRequired": "Vérification Requise",
+        "enterOTP": "Entrer OTP",
+        "otpSentTo": "OTP envoyé à votre {{channel}}",
+        "verifyAndSwitch": "Vérifier et Changer",
+        "resendOTP": "Renvoyer OTP",
+        "otpExpired": "OTP expiré. Veuillez en demander un nouveau.",
+        "invalidOTP": "OTP invalide. Veuillez réessayer.",
+        "languageChanged": "Langue changée avec succès",
+        "switchingTo": "Passage à {{language}}..."
+    }
+}

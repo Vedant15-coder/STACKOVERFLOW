@@ -1,0 +1,220 @@
+{
+    "nav": {
+        "home": "होम",
+        "questions": "प्रश्न",
+        "tags": "टैग",
+        "users": "उपयोगकर्ता",
+        "aiAssist": "AI सहायक",
+        "publicSpace": "सार्वजनिक स्थान",
+        "subscription": "सदस्यता",
+        "login": "लॉग इन करें",
+        "signup": "साइन अप करें",
+        "logout": "लॉग आउट",
+        "profile": "प्रोफ़ाइल",
+        "points": "अंक",
+        "notifications": "सूचनाएं",
+        "about": "हमारे बारे में",
+        "products": "उत्पाद",
+        "forTeams": "टीमों के लिए"
+    },
+    "home": {
+        "title": "शीर्ष प्रश्न",
+        "askQuestion": "प्रश्न पूछें",
+        "questionsCount": "प्रश्न",
+        "noQuestions": "कोई प्रश्न नहीं मिला।",
+        "aiAssist": {
+            "greeting": "नमस्ते {{name}}, आज आप क्या सीखना चाहते हैं?",
+            "defaultName": "दोस्त",
+            "description": "AI सहायक के साथ तुरंत जवाब पाएं, जो समुदाय-सत्यापित ज्ञान पर आधारित है।",
+            "placeholder": "AI सहायक से चैट शुरू करें..."
+        },
+        "filter": {
+            "newest": "नवीनतम",
+            "active": "सक्रिय",
+            "unanswered": "अनुत्तरित",
+            "bountied": "इनामी",
+            "more": "अधिक",
+            "filter": "फ़िल्टर",
+            "votes": "वोट"
+        }
+    },
+    "questions": {
+        "title": "सभी प्रश्न",
+        "askQuestion": "प्रश्न पूछें",
+        "views": "दृश्य",
+        "answer": "उत्तर",
+        "answers": "उत्तर",
+        "votes": "वोट",
+        "asked": "पूछा गया",
+        "noQuestions": "कोई प्रश्न नहीं मिला",
+        "search": "प्रश्न खोजें..."
+    },
+    "questionDetail": {
+        "answers": "उत्तर",
+        "yourAnswer": "आपका उत्तर",
+        "postAnswer": "अपना उत्तर पोस्ट करें",
+        "upvote": "अपवोट",
+        "downvote": "डाउनवोट",
+        "share": "शेयर करें",
+        "delete": "हटाएं",
+        "edit": "संपादित करें"
+    },
+    "askQuestion": {
+        "title": "एक सार्वजनिक प्रश्न पूछें",
+        "titleLabel": "शीर्षक",
+        "titlePlaceholder": "विशिष्ट रहें और कल्पना करें कि आप किसी अन्य व्यक्ति से प्रश्न पूछ रहे हैं",
+        "bodyLabel": "विवरण",
+        "bodyPlaceholder": "वह सभी जानकारी शामिल करें जो किसी को आपके प्रश्न का उत्तर देने के लिए चाहिए",
+        "tagsLabel": "टैग",
+        "tagsPlaceholder": "अपने प्रश्न का वर्णन करने के लिए 5 टैग तक जोड़ें",
+        "submit": "अपना प्रश्न पोस्ट करें",
+        "cancel": "रद्द करें"
+    },
+    "tags": {
+        "title": "टैग",
+        "description": "एक टैग एक कीवर्ड या लेबल है जो आपके प्रश्न को अन्य समान प्रश्नों के साथ वर्गीकृत करता है।",
+        "search": "टैग नाम से फ़िल्टर करें",
+        "questions": "प्रश्न"
+    },
+    "users": {
+        "title": "उपयोगकर्ता",
+        "search": "उपयोगकर्ता खोजें...",
+        "reputation": "प्रतिष्ठा",
+        "joined": "शामिल हुए"
+    },
+    "profile": {
+        "about": "के बारे में",
+        "stats": "आंकड़े",
+        "questions": "प्रश्न",
+        "answers": "उत्तर",
+        "tags": "टैग",
+        "points": "अंक",
+        "reputation": "प्रतिष्ठा",
+        "joined": "शामिल हुए",
+        "editProfile": "प्रोफ़ाइल संपादित करें",
+        "transferPoints": "अंक स्थानांतरित करें",
+        "transactions": "लेनदेन इतिहास",
+        "noQuestions": "अभी तक कोई प्रश्न नहीं",
+        "noAnswers": "अभी तक कोई उत्तर नहीं",
+        "noTags": "अभी तक कोई टैग नहीं"
+    },
+    "aiAssist": {
+        "title": "AI सहायक",
+        "subtitle": "अपने प्रोग्रामिंग प्रश्नों के साथ तुरंत सहायता प्राप्त करें",
+        "placeholder": "प्रोग्रामिंग के बारे में मुझसे कुछ भी पूछें...",
+        "send": "भेजें",
+        "thinking": "सोच रहा है...",
+        "error": "प्रतिक्रिया प्राप्त करने में विफल। कृपया पुनः प्रयास करें।",
+        "examples": {
+            "title": "पूछने का प्रयास करें:",
+            "1": "React क्या है?",
+            "2": "मैं useState का उपयोग कैसे करूं?",
+            "3": "JavaScript में async/await समझाएं"
+        }
+    },
+    "publicSpace": {
+        "title": "सार्वजनिक स्थान",
+        "createPost": "पोस्ट बनाएं",
+        "whatsOnYourMind": "आपके मन में क्या है?",
+        "postButton": "पोस्ट करें",
+        "like": "पसंद",
+        "comment": "टिप्पणी",
+        "share": "शेयर करें",
+        "comments": "टिप्पणियाँ",
+        "writeComment": "एक टिप्पणी लिखें...",
+        "noPosts": "अभी तक कोई पोस्ट नहीं",
+        "uploadImage": "छवि अपलोड करें",
+        "uploadVideo": "वीडियो अपलोड करें"
+    },
+    "subscription": {
+        "title": "अपनी योजना चुनें",
+        "free": "मुफ़्त",
+        "bronze": "कांस्य",
+        "silver": "रजत",
+        "gold": "स्वर्ण",
+        "currentPlan": "वर्तमान योजना",
+        "subscribe": "सदस्यता लें",
+        "questionsPerDay": "प्रति दिन प्रश्न",
+        "unlimited": "असीमित",
+        "features": "विशेषताएं",
+        "price": "मूल्य"
+    },
+    "rewards": {
+        "points": "अंक",
+        "transactions": "लेनदेन",
+        "transfer": "स्थानांतरण",
+        "history": "इतिहास",
+        "earned": "अर्जित",
+        "spent": "खर्च किया",
+        "balance": "शेष"
+    },
+    "auth": {
+        "login": "लॉगिन",
+        "signup": "साइन अप",
+        "email": "ईमेल",
+        "password": "पासवर्ड",
+        "name": "नाम",
+        "confirmPassword": "पासवर्ड की पुष्टि करें",
+        "forgotPassword": "पासवर्ड भूल गए?",
+        "dontHaveAccount": "खाता नहीं है?",
+        "alreadyHaveAccount": "पहले से खाता है?",
+        "loginButton": "लॉग इन करें",
+        "signupButton": "साइन अप करें"
+    },
+    "common": {
+        "loading": "लोड हो रहा है...",
+        "save": "सहेजें",
+        "cancel": "रद्द करें",
+        "delete": "हटाएं",
+        "edit": "संपादित करें",
+        "close": "बंद करें",
+        "submit": "जमा करें",
+        "search": "खोजें",
+        "filter": "फ़िल्टर",
+        "sort": "क्रमबद्ध करें",
+        "yes": "हाँ",
+        "no": "नहीं",
+        "confirm": "पुष्टि करें",
+        "success": "सफलता",
+        "error": "त्रुटि",
+        "warning": "चेतावनी"
+    },
+    "errors": {
+        "required": "यह फ़ील्ड आवश्यक है",
+        "invalidEmail": "अमान्य ईमेल पता",
+        "passwordMismatch": "पासवर्ड मेल नहीं खाते",
+        "minLength": "न्यूनतम लंबाई {{min}} वर्ण है",
+        "maxLength": "अधिकतम लंबाई {{max}} वर्ण है",
+        "networkError": "नेटवर्क त्रुटि। कृपया पुनः प्रयास करें।",
+        "serverError": "सर्वर त्रुटि। कृपया बाद में पुनः प्रयास करें।",
+        "unauthorized": "आप इस क्रिया को करने के लिए अधिकृत नहीं हैं",
+        "notFound": "संसाधन नहीं मिला"
+    },
+    "language": {
+        "selectLanguage": "भाषा चुनें",
+        "english": "English",
+        "hindi": "हिन्दी",
+        "spanish": "Español",
+        "portuguese": "Português",
+        "french": "Français",
+        "chinese": "中文",
+        "verificationRequired": "सत्यापन आवश्यक",
+        "enterOTP": "OTP दर्ज करें",
+        "otpSentTo": "OTP आपके {{channel}} पर भेजा गया",
+        "verifyAndSwitch": "सत्यापित करें और स्विच करें",
+        "resendOTP": "OTP पुनः भेजें",
+        "otpExpired": "OTP समाप्त हो गया। कृपया नया अनुरोध करें।",
+        "invalidOTP": "अमान्य OTP। कृपया पुनः प्रयास करें।",
+        "languageChanged": "भाषा सफलतापूर्वक बदल गई",
+        "switchingTo": "{{language}} पर स्विच कर रहे हैं..."
+    },
+    "sidebar": {
+        "labs": "प्रयोगशाला",
+        "saves": "सहेजे गए",
+        "challenges": "चुनौतियां",
+        "new": "नया",
+        "chat": "चैट",
+        "articles": "लेख",
+        "companies": "कंपनियां"
+    }
+}

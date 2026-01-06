@@ -1,0 +1,196 @@
+{
+    "nav": {
+        "home": "首页",
+        "questions": "问题",
+        "tags": "标签",
+        "users": "用户",
+        "aiAssist": "AI助手",
+        "publicSpace": "公共空间",
+        "subscription": "订阅",
+        "login": "登录",
+        "signup": "注册",
+        "logout": "登出",
+        "profile": "个人资料",
+        "points": "积分",
+        "notifications": "通知"
+    },
+    "home": {
+        "title": "热门问题",
+        "askQuestion": "提问",
+        "filter": {
+            "newest": "最新",
+            "active": "活跃",
+            "unanswered": "未回答",
+            "votes": "投票"
+        }
+    },
+    "questions": {
+        "title": "所有问题",
+        "askQuestion": "提问",
+        "views": "浏览",
+        "answers": "回答",
+        "votes": "投票",
+        "asked": "提问于",
+        "noQuestions": "未找到问题",
+        "search": "搜索问题..."
+    },
+    "questionDetail": {
+        "answers": "回答",
+        "yourAnswer": "您的回答",
+        "postAnswer": "发布您的回答",
+        "upvote": "赞成",
+        "downvote": "反对",
+        "share": "分享",
+        "delete": "删除",
+        "edit": "编辑"
+    },
+    "askQuestion": {
+        "title": "提出公开问题",
+        "titleLabel": "标题",
+        "titlePlaceholder": "具体说明，想象您正在向另一个人提问",
+        "bodyLabel": "正文",
+        "bodyPlaceholder": "包含回答您的问题所需的所有信息",
+        "tagsLabel": "标签",
+        "tagsPlaceholder": "添加最多5个标签来描述您的问题",
+        "submit": "发布您的问题",
+        "cancel": "取消"
+    },
+    "tags": {
+        "title": "标签",
+        "description": "标签是将您的问题与其他类似问题分类的关键词或标签。",
+        "search": "按标签名称筛选",
+        "questions": "问题"
+    },
+    "users": {
+        "title": "用户",
+        "search": "搜索用户...",
+        "reputation": "声誉",
+        "joined": "加入"
+    },
+    "profile": {
+        "about": "关于",
+        "stats": "统计",
+        "questions": "问题",
+        "answers": "回答",
+        "tags": "标签",
+        "points": "积分",
+        "reputation": "声誉",
+        "joined": "加入",
+        "editProfile": "编辑个人资料",
+        "transferPoints": "转移积分",
+        "transactions": "交易历史",
+        "noQuestions": "还没有问题",
+        "noAnswers": "还没有回答",
+        "noTags": "还没有标签"
+    },
+    "aiAssist": {
+        "title": "AI助手",
+        "subtitle": "立即获得编程问题的帮助",
+        "placeholder": "问我任何关于编程的问题...",
+        "send": "发送",
+        "thinking": "思考中...",
+        "error": "获取响应失败。请重试。",
+        "examples": {
+            "title": "尝试询问:",
+            "1": "什么是React?",
+            "2": "如何使用useState?",
+            "3": "解释JavaScript中的async/await"
+        }
+    },
+    "publicSpace": {
+        "title": "公共空间",
+        "createPost": "创建帖子",
+        "whatsOnYourMind": "您在想什么?",
+        "postButton": "发布",
+        "like": "点赞",
+        "comment": "评论",
+        "share": "分享",
+        "comments": "评论",
+        "writeComment": "写评论...",
+        "noPosts": "还没有帖子",
+        "uploadImage": "上传图片",
+        "uploadVideo": "上传视频"
+    },
+    "subscription": {
+        "title": "选择您的计划",
+        "free": "免费",
+        "bronze": "青铜",
+        "silver": "白银",
+        "gold": "黄金",
+        "currentPlan": "当前计划",
+        "subscribe": "订阅",
+        "questionsPerDay": "每天问题数",
+        "unlimited": "无限",
+        "features": "功能",
+        "price": "价格"
+    },
+    "rewards": {
+        "points": "积分",
+        "transactions": "交易",
+        "transfer": "转移",
+        "history": "历史",
+        "earned": "获得",
+        "spent": "花费",
+        "balance": "余额"
+    },
+    "auth": {
+        "login": "登录",
+        "signup": "注册",
+        "email": "电子邮件",
+        "password": "密码",
+        "name": "姓名",
+        "confirmPassword": "确认密码",
+        "forgotPassword": "忘记密码?",
+        "dontHaveAccount": "没有账户?",
+        "alreadyHaveAccount": "已有账户?",
+        "loginButton": "登录",
+        "signupButton": "注册"
+    },
+    "common": {
+        "loading": "加载中...",
+        "save": "保存",
+        "cancel": "取消",
+        "delete": "删除",
+        "edit": "编辑",
+        "close": "关闭",
+        "submit": "提交",
+        "search": "搜索",
+        "filter": "筛选",
+        "sort": "排序",
+        "yes": "是",
+        "no": "否",
+        "confirm": "确认",
+        "success": "成功",
+        "error": "错误",
+        "warning": "警告"
+    },
+    "errors": {
+        "required": "此字段为必填项",
+        "invalidEmail": "无效的电子邮件地址",
+        "passwordMismatch": "密码不匹配",
+        "minLength": "最小长度为{{min}}个字符",
+        "maxLength": "最大长度为{{max}}个字符",
+        "networkError": "网络错误。请重试。",
+        "serverError": "服务器错误。请稍后重试。",
+        "unauthorized": "您无权执行此操作",
+        "notFound": "未找到资源"
+    },
+    "language": {
+        "selectLanguage": "选择语言",
+        "english": "English",
+        "hindi": "हिन्दी",
+        "spanish": "Español",
+        "portuguese": "Português",
+        "french": "Français",
+        "chinese": "中文",
+        "verificationRequired": "需要验证",
+        "enterOTP": "输入OTP",
+        "otpSentTo": "OTP已发送到您的{{channel}}",
+        "verifyAndSwitch": "验证并切换",
+        "resendOTP": "重新发送OTP",
+        "otpExpired": "OTP已过期。请请求新的。",
+        "invalidOTP": "无效的OTP。请重试。",
+        "languageChanged": "语言更改成功",
+        "switchingTo": "正在切换到{{language}}..."
+    }
+}

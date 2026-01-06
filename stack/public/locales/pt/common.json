@@ -1,0 +1,196 @@
+{
+    "nav": {
+        "home": "Início",
+        "questions": "Perguntas",
+        "tags": "Tags",
+        "users": "Usuários",
+        "aiAssist": "Assistente IA",
+        "publicSpace": "Espaço Público",
+        "subscription": "Assinatura",
+        "login": "Entrar",
+        "signup": "Cadastrar",
+        "logout": "Sair",
+        "profile": "Perfil",
+        "points": "Pontos",
+        "notifications": "Notificações"
+    },
+    "home": {
+        "title": "Principais Perguntas",
+        "askQuestion": "Fazer Pergunta",
+        "filter": {
+            "newest": "Mais recentes",
+            "active": "Ativas",
+            "unanswered": "Sem resposta",
+            "votes": "Votos"
+        }
+    },
+    "questions": {
+        "title": "Todas as Perguntas",
+        "askQuestion": "Fazer Pergunta",
+        "views": "visualizações",
+        "answers": "respostas",
+        "votes": "votos",
+        "asked": "perguntado",
+        "noQuestions": "Nenhuma pergunta encontrada",
+        "search": "Pesquisar perguntas..."
+    },
+    "questionDetail": {
+        "answers": "Respostas",
+        "yourAnswer": "Sua Resposta",
+        "postAnswer": "Postar Sua Resposta",
+        "upvote": "Votar a favor",
+        "downvote": "Votar contra",
+        "share": "Compartilhar",
+        "delete": "Excluir",
+        "edit": "Editar"
+    },
+    "askQuestion": {
+        "title": "Fazer uma Pergunta Pública",
+        "titleLabel": "Título",
+        "titlePlaceholder": "Seja específico e imagine que está fazendo uma pergunta a outra pessoa",
+        "bodyLabel": "Corpo",
+        "bodyPlaceholder": "Inclua todas as informações que alguém precisaria para responder sua pergunta",
+        "tagsLabel": "Tags",
+        "tagsPlaceholder": "Adicione até 5 tags para descrever sobre o que é sua pergunta",
+        "submit": "Postar Sua Pergunta",
+        "cancel": "Cancelar"
+    },
+    "tags": {
+        "title": "Tags",
+        "description": "Uma tag é uma palavra-chave ou rótulo que categoriza sua pergunta com outras perguntas semelhantes.",
+        "search": "Filtrar por nome da tag",
+        "questions": "perguntas"
+    },
+    "users": {
+        "title": "Usuários",
+        "search": "Pesquisar usuários...",
+        "reputation": "reputação",
+        "joined": "entrou"
+    },
+    "profile": {
+        "about": "Sobre",
+        "stats": "Estatísticas",
+        "questions": "Perguntas",
+        "answers": "Respostas",
+        "tags": "Tags",
+        "points": "Pontos",
+        "reputation": "Reputação",
+        "joined": "Entrou",
+        "editProfile": "Editar Perfil",
+        "transferPoints": "Transferir Pontos",
+        "transactions": "Histórico de Transações",
+        "noQuestions": "Ainda não há perguntas",
+        "noAnswers": "Ainda não há respostas",
+        "noTags": "Ainda não há tags"
+    },
+    "aiAssist": {
+        "title": "Assistente IA",
+        "subtitle": "Obtenha ajuda instantânea com suas perguntas de programação",
+        "placeholder": "Pergunte-me qualquer coisa sobre programação...",
+        "send": "Enviar",
+        "thinking": "Pensando...",
+        "error": "Falha ao obter resposta. Por favor, tente novamente.",
+        "examples": {
+            "title": "Tente perguntar:",
+            "1": "O que é React?",
+            "2": "Como uso useState?",
+            "3": "Explique async/await em JavaScript"
+        }
+    },
+    "publicSpace": {
+        "title": "Espaço Público",
+        "createPost": "Criar Publicação",
+        "whatsOnYourMind": "O que você está pensando?",
+        "postButton": "Publicar",
+        "like": "Curtir",
+        "comment": "Comentar",
+        "share": "Compartilhar",
+        "comments": "Comentários",
+        "writeComment": "Escreva um comentário...",
+        "noPosts": "Ainda não há publicações",
+        "uploadImage": "Enviar Imagem",
+        "uploadVideo": "Enviar Vídeo"
+    },
+    "subscription": {
+        "title": "Escolha Seu Plano",
+        "free": "Grátis",
+        "bronze": "Bronze",
+        "silver": "Prata",
+        "gold": "Ouro",
+        "currentPlan": "Plano Atual",
+        "subscribe": "Assinar",
+        "questionsPerDay": "perguntas por dia",
+        "unlimited": "Ilimitado",
+        "features": "Recursos",
+        "price": "Preço"
+    },
+    "rewards": {
+        "points": "Pontos",
+        "transactions": "Transações",
+        "transfer": "Transferir",
+        "history": "Histórico",
+        "earned": "Ganho",
+        "spent": "Gasto",
+        "balance": "Saldo"
+    },
+    "auth": {
+        "login": "Entrar",
+        "signup": "Cadastrar",
+        "email": "E-mail",
+        "password": "Senha",
+        "name": "Nome",
+        "confirmPassword": "Confirmar Senha",
+        "forgotPassword": "Esqueceu sua senha?",
+        "dontHaveAccount": "Não tem uma conta?",
+        "alreadyHaveAccount": "Já tem uma conta?",
+        "loginButton": "Entrar",
+        "signupButton": "Cadastrar"
+    },
+    "common": {
+        "loading": "Carregando...",
+        "save": "Salvar",
+        "cancel": "Cancelar",
+        "delete": "Excluir",
+        "edit": "Editar",
+        "close": "Fechar",
+        "submit": "Enviar",
+        "search": "Pesquisar",
+        "filter": "Filtrar",
+        "sort": "Ordenar",
+        "yes": "Sim",
+        "no": "Não",
+        "confirm": "Confirmar",
+        "success": "Sucesso",
+        "error": "Erro",
+        "warning": "Aviso"
+    },
+    "errors": {
+        "required": "Este campo é obrigatório",
+        "invalidEmail": "Endereço de e-mail inválido",
+        "passwordMismatch": "As senhas não coincidem",
+        "minLength": "O comprimento mínimo é de {{min}} caracteres",
+        "maxLength": "O comprimento máximo é de {{max}} caracteres",
+        "networkError": "Erro de rede. Por favor, tente novamente.",
+        "serverError": "Erro do servidor. Por favor, tente mais tarde.",
+        "unauthorized": "Você não está autorizado a realizar esta ação",
+        "notFound": "Recurso não encontrado"
+    },
+    "language": {
+        "selectLanguage": "Selecionar Idioma",
+        "english": "English",
+        "hindi": "हिन्दी",
+        "spanish": "Español",
+        "portuguese": "Português",
+        "french": "Français",
+        "chinese": "中文",
+        "verificationRequired": "Verificação Necessária",
+        "enterOTP": "Inserir OTP",
+        "otpSentTo": "OTP enviado para seu {{channel}}",
+        "verifyAndSwitch": "Verificar e Mudar",
+        "resendOTP": "Reenviar OTP",
+        "otpExpired": "OTP expirado. Por favor, solicite um novo.",
+        "invalidOTP": "OTP inválido. Por favor, tente novamente.",
+        "languageChanged": "Idioma alterado com sucesso",
+        "switchingTo": "Mudando para {{language}}..."
+    }
+}

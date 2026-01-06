@@ -17,13 +17,19 @@ export default function FriendSearchWidget() {
     const [loading, setLoading] = useState(false);
     const [addingFriend, setAddingFriend] = useState<string | null>(null);
     const [initialLoad, setInitialLoad] = useState(true);
+    const [hasMounted, setHasMounted] = useState(false);
+
+    // Prevent hydration errors by only rendering after mount
+    useEffect(() => {
+        setHasMounted(true);
+    }, []);
 
     // Load all users on mount (only if authenticated)
     useEffect(() => {
-        if (user) {
+        if (user && hasMounted) {
             fetchUsers("");
         }
-    }, [user]);
+    }, [user, hasMounted]);
 
     // Search users when query changes
     useEffect(() => {
@@ -78,6 +84,21 @@ export default function FriendSearchWidget() {
             setAddingFriend(null);
         }
     };
+
+    // Prevent hydration errors - don't render until mounted
+    if (!hasMounted) {
+        return (
+            <div className="bg-white border border-gray-200 rounded p-3 lg:p-4">
+                <h3 className="font-semibold text-gray-800 mb-3 text-sm lg:text-base flex items-center gap-2">
+                    <UserPlus className="w-4 h-4" />
+                    Find Friends
+                </h3>
+                <div className="flex justify-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white border border-gray-200 rounded p-3 lg:p-4">

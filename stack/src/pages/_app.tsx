@@ -3,7 +3,9 @@ import type { AppProps } from "next/app";
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "@/lib/AuthContext";
 import Head from "next/head";
-export default function App({ Component, pageProps }: AppProps) {
+import "@/lib/i18n"; // Initialize i18n
+
+function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
@@ -16,3 +18,6 @@ export default function App({ Component, pageProps }: AppProps) {
     </>
   );
 }
+
+export default App;
+

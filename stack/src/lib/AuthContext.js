@@ -26,7 +26,8 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       const { data, token } = res.data;
-      localStorage.setItem("user", JSON.stringify({...data,token}));
+      localStorage.setItem("user", JSON.stringify({ ...data, token }));
+      localStorage.setItem("token", token); // Store token separately for language OTP
       setUser(data);
       toast.success("Signup Successful");
     } catch (error) {
@@ -44,7 +45,8 @@ export const AuthProvider = ({ children }) => {
         password,
       });
       const { data, token } = res.data;
-      localStorage.setItem("user", JSON.stringify({...data,token}));
+      localStorage.setItem("user", JSON.stringify({ ...data, token }));
+      localStorage.setItem("token", token); // Store token separately for language OTP
       setUser(data);
       toast.success("Login Successful");
     } catch (error) {
@@ -56,6 +58,7 @@ export const AuthProvider = ({ children }) => {
   const Logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token"); // Remove token as well
     toast.info("Logged out");
   };
   return (

@@ -2,7 +2,9 @@ import { useAuth } from "@/lib/AuthContext";
 import { Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import NotificationBell from "./NotificationBell";
+import LanguageSelector from "./LanguageSelector";
 
 // const User = {
 //   _id: "1",
@@ -11,6 +13,7 @@ import NotificationBell from "./NotificationBell";
 
 const Navbar = ({ handleslidein }: any) => {
   const { user, Logout } = useAuth();
+  const { t } = useTranslation();
   const [hasMounted, setHasMounted] = useState(false);
   useEffect(() => {
     setHasMounted(true);
@@ -34,36 +37,51 @@ const Navbar = ({ handleslidein }: any) => {
           </Link>
 
           <div className="hidden sm:flex gap-1">
-            {["About", "Products", "For Teams"].map((item) => (
+            {[
+              { key: "about", label: "About" },
+              { key: "products", label: "Products" },
+              { key: "forTeams", label: "For Teams" }
+            ].map((item) => (
               <Link
-                key={item}
+                key={item.key}
                 href="/"
                 className="text-sm text-[#454545] font-medium px-4 py-2 rounded hover:bg-gray-200 transition"
               >
-                {item}
+                {hasMounted ? t(`nav.${item.key}`) : item.label}
               </Link>
             ))}
           </div>
           <form className="hidden lg:block flex-grow relative px-3">
             <input
               type="text"
-              placeholder="Search..."
+              placeholder={hasMounted ? t('common.search') : 'Search...'}
               className="w-full max-w-[600px] pl-9 pr-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-300"
             />
             <Search className="absolute left-4 top-2.5 h-4 w-4 text-gray-600" />
           </form>
         </div>
         <div className="flex items-center gap-2">
+          {/* Language Selector */}
+          <LanguageSelector />
+
           {!hasMounted ? null : !user ? (
             <Link
               href="/auth"
               className="text-sm font-medium text-[#454545] bg-[#e7f8fe] hover:bg-[#d3e4eb] border border-blue-500 px-4 py-1.5 rounded transition"
             >
-              Log in
+              {t('nav.login')}
             </Link>
           ) : (
             <>
               <NotificationBell />
+
+              <Link
+                href="/subscription"
+                className="text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 px-4 py-1.5 rounded shadow-sm transition"
+                title={t('nav.subscription')}
+              >
+                ⭐ {t('nav.subscription')}
+              </Link>
 
               <Link
                 href={`/users/${user._id}`}
@@ -76,7 +94,7 @@ const Navbar = ({ handleslidein }: any) => {
                 onClick={handlelogout}
                 className="text-sm font-medium text-[#454545] bg-[#e7f8fe] hover:bg-[#d3e4eb] border border-blue-500 px-4 py-1.5 rounded transition"
               >
-                Log out
+                {t('nav.logout')}
               </button>
             </>
           )}
