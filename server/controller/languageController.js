@@ -37,7 +37,7 @@ const getOTPChannel = (targetLanguage) => {
 export const requestLanguageChange = async (req, res) => {
     try {
         const { targetLanguage } = req.body;
-        const userId = req.userid; // From JWT middleware (lowercase!)
+        const userId = req.userId; // From JWT middleware (lowercase!)
 
         // Validation
         const validLanguages = ["en", "hi", "es", "pt", "fr", "zh"];
@@ -125,7 +125,7 @@ export const requestLanguageChange = async (req, res) => {
 export const verifyOTPAndUpdateLanguage = async (req, res) => {
     try {
         const { otp } = req.body;
-        const userId = req.userid; // From JWT middleware (lowercase!)
+        const userId = req.userId; // From JWT middleware (lowercase!)
 
         if (!otp || otp.length !== 6) {
             return res.status(400).json({
@@ -169,7 +169,7 @@ export const verifyOTPAndUpdateLanguage = async (req, res) => {
  */
 export const getCurrentLanguage = async (req, res) => {
     try {
-        const userId = req.userid; // From JWT middleware (lowercase!)
+        const userId = req.userId; // From JWT middleware (lowercase!)
 
         const user = await User.findById(userId).select("language");
         if (!user) {

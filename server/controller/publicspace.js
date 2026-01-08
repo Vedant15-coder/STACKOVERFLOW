@@ -73,7 +73,7 @@ const canUserPost = async (userId) => {
 export const createPost = async (req, res) => {
     try {
         const { caption, mediaUrl, mediaType } = req.body;
-        const userId = req.userid; // From JWT middleware
+        const userId = req.userId; // From JWT middleware
 
         if (!caption || !mediaUrl || !mediaType) {
             return res.status(400).json({
@@ -157,7 +157,7 @@ export const getAllPosts = async (req, res) => {
 export const likePost = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.userid;
+        const userId = req.userId;
 
         const post = await Post.findById(id).populate("author", "name");
         if (!post) {
@@ -214,7 +214,7 @@ export const commentOnPost = async (req, res) => {
     try {
         const { id } = req.params;
         const { text } = req.body;
-        const userId = req.userid;
+        const userId = req.userId;
 
         if (!text || text.trim() === "") {
             return res.status(400).json({
@@ -276,7 +276,7 @@ export const sharePost = async (req, res) => {
     try {
         const { id } = req.params;
         const { friendIds } = req.body;
-        const userId = req.userid;
+        const userId = req.userId;
 
         if (!friendIds || !Array.isArray(friendIds) || friendIds.length === 0) {
             return res.status(400).json({
@@ -329,7 +329,7 @@ export const sharePost = async (req, res) => {
 // Get user's posting stats
 export const getUserStats = async (req, res) => {
     try {
-        const userId = req.userid;
+        const userId = req.userId;
 
         const user = await User.findById(userId);
         if (!user) {

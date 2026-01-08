@@ -5,7 +5,7 @@ import User from "../models/auth.js";
 export const searchUsers = async (req, res) => {
     try {
         const { query } = req.query;
-        const userId = req.userid;
+        const userId = req.userId;
 
         // Get current user to check existing friends
         const currentUser = await User.findById(userId);
@@ -55,7 +55,7 @@ export const searchUsers = async (req, res) => {
 export const sendFriendRequest = async (req, res) => {
     try {
         const { userId: friendId } = req.params;
-        const userId = req.userid;
+        const userId = req.userId;
 
         if (userId === friendId) {
             return res.status(400).json({
@@ -124,7 +124,7 @@ export const sendFriendRequest = async (req, res) => {
 export const acceptFriendRequest = async (req, res) => {
     try {
         const { userId: senderId } = req.params;
-        const userId = req.userid;
+        const userId = req.userId;
 
         const currentUser = await User.findById(userId);
         const senderUser = await User.findById(senderId);
@@ -156,6 +156,20 @@ export const acceptFriendRequest = async (req, res) => {
         await currentUser.save();
         await senderUser.save();
 
+        // Mark the original friend request notification as read
+        const Notification = (await import("../models/notification.js")).default;
+        await Notification.updateMany(
+            {
+                recipient: userId,
+                sender: senderId,
+                type: "friend_request",
+                read: false
+            },
+            {
+                $set: { read: true }
+            }
+        );
+
         // Create notification for sender
         const { createNotification } = await import("./notification.js");
         await createNotification(
@@ -184,7 +198,7 @@ export const acceptFriendRequest = async (req, res) => {
 export const rejectFriendRequest = async (req, res) => {
     try {
         const { userId: senderId } = req.params;
-        const userId = req.userid;
+        const userId = req.userId;
 
         const currentUser = await User.findById(userId);
 
@@ -210,6 +224,20 @@ export const rejectFriendRequest = async (req, res) => {
 
         await currentUser.save();
 
+        // Mark the friend request notification as read
+        const Notification = (await import("../models/notification.js")).default;
+        await Notification.updateMany(
+            {
+                recipient: userId,
+                sender: senderId,
+                type: "friend_request",
+                read: false
+            },
+            {
+                $set: { read: true }
+            }
+        );
+
         return res.status(200).json({
             success: true,
             message: "Friend request rejected",
@@ -227,7 +255,7 @@ export const rejectFriendRequest = async (req, res) => {
 // Get user's friends list
 export const getFriends = async (req, res) => {
     try {
-        const userId = req.userid;
+        const userId = req.userId;
 
         const user = await User.findById(userId)
             .populate("friends", "name email joinDate");

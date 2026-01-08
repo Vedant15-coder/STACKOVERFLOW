@@ -343,4 +343,126 @@ export const sendLanguageOTP = async (email, otp, targetLanguage) => {
     }
 };
 
+/**
+ * Send login verification OTP email to user
+ * @param {string} email - User's email address
+ * @param {string} otp - 6-digit OTP
+ * @param {string} browser - Browser name
+ * @param {string} os - Operating system
+ * @returns {Promise<{success: boolean, message?: string}>}
+ */
+export const sendLoginOTP = async (email, otp, browser = "Chrome", os = "Unknown") => {
+    try {
+        // Development mode: Log to console for testing
+        if (process.env.NODE_ENV === 'development') {
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log('📧 [DEV MODE] Login Verification OTP Email');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            console.log(`To: ${email}`);
+            console.log(`Browser: ${browser}`);
+            console.log(`OS: ${os}`);
+            console.log(`OTP: ${otp}`);
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+            return { success: true };
+        }
+
+        // Production mode: Integrate with actual email service
+        // TODO: Replace with actual email service (SendGrid, Nodemailer, AWS SES, etc.)
+
+        /*
+        Example with Nodemailer:
+        
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
+            }
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'DevQuery Login Verification',
+            html: `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                        .header { background: #0066cc; color: white; padding: 20px; text-align: center; }
+                        .content { background: #f9f9f9; padding: 20px; }
+                        .otp-box { background: white; padding: 20px; margin: 20px 0; text-align: center; border: 2px solid #0066cc; border-radius: 8px; }
+                        .otp-code { font-size: 32px; font-weight: bold; color: #0066cc; letter-spacing: 8px; }
+                        .device-info { background: #e3f2fd; padding: 12px; margin: 15px 0; border-radius: 4px; }
+                        .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px; margin: 15px 0; }
+                        .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>🔐 Login Verification</h1>
+                        </div>
+                        <div class="content">
+                            <p>Hello,</p>
+                            <p>A login attempt was detected from <strong>${browser}</strong> on <strong>${os}</strong>.</p>
+                            
+                            <div class="otp-box">
+                                <p>Your verification code is:</p>
+                                <div class="otp-code">${otp}</div>
+                                <p style="color: #666; font-size: 14px; margin-top: 10px;">Valid for 5 minutes</p>
+                            </div>
+
+                            <div class="device-info">
+                                <strong>📱 Login Details:</strong>
+                                <ul style="margin: 5px 0; padding-left: 20px;">
+                                    <li>Browser: ${browser}</li>
+                                    <li>Operating System: ${os}</li>
+                                    <li>Time: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST</li>
+                                </ul>
+                            </div>
+
+                            <div class="warning">
+                                <strong>⚠️ Security Notice:</strong>
+                                <ul style="margin: 5px 0; padding-left: 20px;">
+                                    <li>Never share this code with anyone</li>
+                                    <li>DevQuery will never ask for this code via phone or chat</li>
+                                    <li>If you didn't attempt to log in, please secure your account immediately</li>
+                                </ul>
+                            </div>
+
+                            <p>If you have any questions, please contact our support team.</p>
+                            <p><strong>The DevQuery Team</strong></p>
+                        </div>
+                        <div class="footer">
+                            <p>This is an automated email. Please do not reply to this message.</p>
+                            <p>&copy; ${new Date().getFullYear()} DevQuery. All rights reserved.</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        */
+
+        // For now, mock success in production
+        console.log(`[PRODUCTION] Login OTP email would be sent to: ${email}`);
+        console.log(`OTP: ${otp}, Browser: ${browser}, OS: ${os}`);
+        return { success: true };
+
+    } catch (error) {
+        console.error('Error sending login OTP email:', error);
+        return {
+            success: false,
+            message: 'Failed to send OTP email. Please try again later.'
+        };
+    }
+};
+
+
+
 

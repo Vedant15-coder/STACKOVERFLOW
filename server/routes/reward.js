@@ -13,7 +13,7 @@ const router = express.Router();
  */
 router.get("/my-points", auth, async (req, res) => {
     try {
-        const result = await getUserPoints(req.userid);
+        const result = await getUserPoints(req.userId);
         res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -39,7 +39,7 @@ router.get("/user/:userId", async (req, res) => {
 router.post("/transfer", auth, async (req, res) => {
     try {
         const { toUserId, amount } = req.body;
-        const fromUserId = req.userid;
+        const fromUserId = req.userId;
 
         if (!toUserId || !amount) {
             return res.status(400).json({ message: "Missing required fields" });
@@ -68,7 +68,7 @@ router.post("/transfer", auth, async (req, res) => {
 router.get("/transactions", auth, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 50;
-        const result = await getTransactionHistory(req.userid, limit);
+        const result = await getTransactionHistory(req.userId, limit);
         res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ message: error.message });

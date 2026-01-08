@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import PointsDisplay from "@/components/PointsDisplay";
 import TransferPoints from "@/components/TransferPoints";
 import TransactionHistory from "@/components/TransactionHistory";
+import LoginHistory from "@/components/LoginHistory";
 const getUserData = (id: string) => {
   const users = {
     "1": {
@@ -419,6 +420,11 @@ const index = () => {
                 <TransactionHistory userId={id as string} limit={10} key={refreshKey} />
               </CardContent>
             </Card>
+
+            {/* Login History Card - Only show for own profile */}
+            {isOwnProfile && (
+              <LoginHistory userId={id as string} />
+            )}
 
             <Card>
               <CardHeader>

@@ -4,7 +4,7 @@ import Post from "../models/post.js";
 // Get user's notifications
 export const getNotifications = async (req, res) => {
     try {
-        const userId = req.userid;
+        const userId = req.userId;
 
         const notifications = await Notification.find({ recipient: userId })
             .populate("sender", "name email")
@@ -34,7 +34,7 @@ export const getNotifications = async (req, res) => {
 // Get unread notification count
 export const getUnreadCount = async (req, res) => {
     try {
-        const userId = req.userid;
+        const userId = req.userId;
 
         const count = await Notification.countDocuments({
             recipient: userId,
@@ -59,7 +59,7 @@ export const getUnreadCount = async (req, res) => {
 export const markAsRead = async (req, res) => {
     try {
         const { id } = req.params;
-        const userId = req.userid;
+        const userId = req.userId;
 
         const notification = await Notification.findOne({
             _id: id,
@@ -93,7 +93,7 @@ export const markAsRead = async (req, res) => {
 // Mark all notifications as read
 export const markAllAsRead = async (req, res) => {
     try {
-        const userId = req.userid;
+        const userId = req.userId;
 
         await Notification.updateMany(
             { recipient: userId, read: false },

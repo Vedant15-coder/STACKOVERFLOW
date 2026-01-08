@@ -13,14 +13,19 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import LoginOTPModal from "@/components/LoginOTPModal";
 
 const index = () => {
   const router = useRouter();
-  const { Login, loading } = useAuth();
+  const { Login, verifyLoginOTP, loading } = useAuth();
   const [form, setform] = useState({ email: "", password: "" });
+  const [showOTPModal, setShowOTPModal] = useState(false);
+  const [otpData, setOtpData] = useState({ userId: "", email: "" });
+
   const handleChange = (e: any) => {
     setform({ ...form, [e.target.id]: e.target.value });
   };
+
   const handlesubmit = async (e: any) => {
     e.preventDefault();
     if (!form.email || !form.password) {
@@ -28,10 +33,34 @@ const index = () => {
       return;
     }
     try {
-      await Login(form);
+      const result = await Login(form);
+
+      // Check if OTP is required
+      if (result?.requiresOTP) {
+        setOtpData({ userId: result.userId, email: result.email });
+        setShowOTPModal(true);
+        toast.info(result.message);
+      } else if (result?.success) {
+        // Direct login successful
+        router.push("/");
+      }
+    } catch (error: any) {
+      // Check if it's a mobile time restriction error
+      if (error.response?.data?.blocked) {
+        toast.error(error.response.data.message);
+      }
+      console.log(error);
+    }
+  };
+
+  const handleOTPVerify = async (otp: string) => {
+    try {
+      await verifyLoginOTP({ userId: otpData.userId, otp });
+      setShowOTPModal(false);
       router.push("/");
     } catch (error) {
-      console.log(error);
+      // Error already handled in AuthContext
+      throw error;
     }
   };
   return (
@@ -155,6 +184,15 @@ const index = () => {
             </CardContent>
           </Card>
         </form>
+
+        {/* Login OTP Modal */}
+        <LoginOTPModal
+          isOpen={showOTPModal}
+          onClose={() => setShowOTPModal(false)}
+          onVerify={handleOTPVerify}
+          email={otpData.email}
+          loading={loading}
+        />
       </div>
     </div>
   );

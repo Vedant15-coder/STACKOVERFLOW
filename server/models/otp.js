@@ -18,12 +18,16 @@ const otpSchema = mongoose.Schema({
     },
     purpose: {
         type: String,
+        enum: ["language_change", "login_verification", "password_reset"],
         default: "language_change",
     },
     targetLanguage: {
         type: String,
         enum: ["en", "hi", "es", "pt", "fr", "zh"],
-        required: true,
+        required: function () {
+            // Only required for language_change purpose
+            return this.purpose === "language_change";
+        },
     },
     attempts: {
         type: Number,

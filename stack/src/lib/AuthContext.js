@@ -44,15 +44,56 @@ export const AuthProvider = ({ children }) => {
         email,
         password,
       });
+
+      // Check if OTP is required
+      if (res.data.requiresOTP) {
+        setloading(false);
+        return {
+          requiresOTP: true,
+          userId: res.data.userId,
+          email: res.data.email,
+          message: res.data.message,
+        };
+      }
+
+      // Direct login (no OTP required)
       const { data, token } = res.data;
       localStorage.setItem("user", JSON.stringify({ ...data, token }));
-      localStorage.setItem("token", token); // Store token separately for language OTP
+      localStorage.setItem("token", token);
       setUser(data);
       toast.success("Login Successful");
+      setloading(false);
+      return { success: true };
     } catch (error) {
+      setloading(false);
       const msg = error.response?.data.message || "Login failed";
       seterror(msg);
       toast.error(msg);
+      throw error;
+    }
+  };
+
+  const verifyLoginOTP = async ({ userId, otp }) => {
+    setloading(true);
+    seterror(null);
+    try {
+      const res = await axiosInstance.post("/user/verify-login-otp", {
+        userId,
+        otp,
+      });
+      const { data, token } = res.data;
+      localStorage.setItem("user", JSON.stringify({ ...data, token }));
+      localStorage.setItem("token", token);
+      setUser(data);
+      toast.success("Login Successful");
+      setloading(false);
+      return { success: true };
+    } catch (error) {
+      setloading(false);
+      const msg = error.response?.data.message || "OTP verification failed";
+      seterror(msg);
+      toast.error(msg);
+      throw error;
     }
   };
   const Logout = () => {
@@ -63,7 +104,7 @@ export const AuthProvider = ({ children }) => {
   };
   return (
     <AuthContext.Provider
-      value={{ user, Signup, Login, Logout, loading, error }}
+      value={{ user, Signup, Login, verifyLoginOTP, Logout, loading, error }}
     >
       {children}
     </AuthContext.Provider>
