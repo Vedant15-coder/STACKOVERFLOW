@@ -67,15 +67,8 @@ const index = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-6 lg:mb-8">
-          <Link href="/" className="flex items-center justify-center mb-4">
-            <div className="w-6 h-6 lg:w-8 lg:h-8 bg-orange-500 rounded mr-2 flex items-center justify-center">
-              <div className="w-4 h-4 lg:w-6 lg:h-6 bg-white rounded-sm flex items-center justify-center">
-                <div className="w-3 h-3 lg:w-4 lg:h-4 bg-orange-500 rounded-sm"></div>
-              </div>
-            </div>
-            <span className="text-lg lg:text-xl font-bold text-gray-800">
-              stack<span className="font-normal">overflow</span>
-            </span>
+          <Link href="/" className="inline-block">
+            <img src="/logo.png" alt="DevQuery Logo" className="h-12 lg:h-16 w-auto mx-auto" />
           </Link>
         </div>
         <form onSubmit={handlesubmit}>
