@@ -6,6 +6,7 @@ import userroutes from "./routes/auth.js"
 import questionroute from "./routes/question.js"
 import answerroutes from "./routes/answer.js"
 import geminiroutes from "./routes/gemini.js"
+import airoutes from "./routes/ai.js"
 import publicspaceroutes from "./routes/publicspace.js"
 import friendroutes from "./routes/friend.js"
 import notificationroutes from "./routes/notification.js"
@@ -15,6 +16,7 @@ import rewardRoutes from "./routes/reward.js"
 import languageRoutes from "./routes/language.js"
 const app = express();
 dotenv.config();
+console.log("HF KEY LOADED:", !!process.env.HF_API_KEY);
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
@@ -33,6 +35,7 @@ app.use('/user', forgotPasswordRoutes)
 app.use('/question', questionroute)
 app.use('/answer', answerroutes)
 app.use('/gemini', geminiroutes)
+app.use('/ai', airoutes)
 app.use('/public', publicspaceroutes)
 app.use('/friend', friendroutes)
 app.use('/notification', notificationroutes)

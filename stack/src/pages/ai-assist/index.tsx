@@ -33,7 +33,7 @@ export default function AIAssist() {
         setLoading(true);
 
         try {
-            const response = await axiosInstance.post("/gemini/ask", {
+            const response = await axiosInstance.post("/ai/ask", {
                 question: question,
             });
 
@@ -52,7 +52,9 @@ export default function AIAssist() {
             // Get the error message from the response or use a default
             let errorText = "Sorry, I encountered an error. Please try again later.";
 
-            if (error.response?.data?.message) {
+            if (error.response?.data?.error) {
+                errorText = error.response.data.error;
+            } else if (error.response?.data?.message) {
                 errorText = error.response.data.message;
             } else if (error.message) {
                 errorText = error.message;
@@ -82,7 +84,7 @@ export default function AIAssist() {
                     <div>
                         <h1 className="text-xl lg:text-2xl font-semibold">AI Assist</h1>
                         <p className="text-sm text-gray-600">
-                            Powered by Google Gemini
+                            Powered by Hugging Face
                         </p>
                     </div>
                 </div>
