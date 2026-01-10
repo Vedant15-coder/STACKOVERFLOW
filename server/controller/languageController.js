@@ -32,6 +32,17 @@ const getOTPChannel = (targetLanguage) => {
 };
 
 /**
+ * Check if target language requires SMS/phone number
+ * @param {string} targetLanguage - Language code
+ * @returns {boolean} True if phone number required
+ */
+const requiresSMS = (targetLanguage) => {
+    // Hindi, Spanish, Portuguese, Chinese require phone numbers
+    return ["hi", "es", "pt", "zh"].includes(targetLanguage);
+};
+
+
+/**
  * Request language change with OTP
  * POST /api/language/request-otp
  */
