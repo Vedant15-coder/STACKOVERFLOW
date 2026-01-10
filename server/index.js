@@ -31,8 +31,6 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.options("*", cors());
-
 // Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is running" });
@@ -54,6 +52,11 @@ app.use('/notification', notificationroutes)
 app.use('/api/subscription', subscriptionRoutes)
 app.use('/api/rewards', rewardRoutes)
 app.use('/api/language', languageRoutes)
+
+// 404 handler - MUST BE LAST
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
 
 const PORT = process.env.PORT || 5000;
 const databaseurl = process.env.MONGODB_URL;
