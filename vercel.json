@@ -1,0 +1,18 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "stack/package.json",
+            "use": "@vercel/next"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "stack/$1"
+        }
+    ],
+    "env": {
+        "NEXT_PUBLIC_APP_NAME": "DevQuery"
+    }
+}
