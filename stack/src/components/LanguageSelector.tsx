@@ -11,6 +11,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
     const { t, i18n } = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const [showOTPModal, setShowOTPModal] = useState(false);
+    const [showPhoneModal, setShowPhoneModal] = useState(false);
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [phoneError, setPhoneError] = useState("");
     const [pendingLanguage, setPendingLanguage] = useState<string>(""); // Language waiting for OTP
     const [otpChannel, setOtpChannel] = useState<"email" | "mobile">("email");
     const [isProcessing, setIsProcessing] = useState(false);
@@ -53,8 +56,26 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
      */
     const resetOTPState = () => {
         setShowOTPModal(false);
+        setShowPhoneModal(false);
         setPendingLanguage("");
         setOtpChannel("email");
+        setPhoneNumber("");
+        setPhoneError("");
+    };
+
+    /**
+     * Validate Indian phone number
+     */
+    const validatePhoneNumber = (phone: string): boolean => {
+        const cleaned = phone.replace(/[\s\-\(\)]/g, "");
+        return /^[6-9]\d{9}$/.test(cleaned);
+    };
+
+    /**
+     * Check if language requires SMS OTP (Hindi, Spanish, Portuguese, Chinese)
+     */
+    const requiresSMS = (languageCode: string): boolean => {
+        return ["hi", "es", "pt", "zh"].includes(languageCode);
     };
 
     const handleLanguageSelect = async (languageCode: string) => {
@@ -92,6 +113,15 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
             if (!token) {
                 console.log("⚠️ No token found - applying language instantly");
                 await applyLanguageChange(languageCode);
+                setIsProcessing(false);
+                return;
+            }
+
+            // For SMS languages, show phone number modal first
+            if (requiresSMS(languageCode)) {
+                console.log("📱 SMS language selected - showing phone number modal");
+                setPendingLanguage(languageCode);
+                setShowPhoneModal(true);
                 setIsProcessing(false);
                 return;
             }
@@ -163,6 +193,54 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
             }
         } catch (error) {
             console.error("Unexpected error in language selection:", error);
+            setIsProcessing(false);
+        }
+    };
+
+    /**
+     * Handle phone number submission for SMS languages
+     */
+    const handlePhoneSubmit = async () => {
+        // Validate phone number
+        if (!validatePhoneNumber(phoneNumber)) {
+            setPhoneError("Please enter a valid 10-digit Indian phone number (starting with 6-9)");
+            return;
+        }
+
+        setPhoneError("");
+        setIsProcessing(true);
+
+        try {
+            const token = localStorage.getItem("token");
+            if (!token || !pendingLanguage) {
+                setIsProcessing(false);
+                return;
+            }
+
+            console.log("📡 Sending OTP request with phone number");
+            const response = await axios.post(
+                "/api/language/request-otp",
+                {
+                    targetLanguage: pendingLanguage,
+                    phoneNumber: phoneNumber.replace(/[\s\-\(\)]/g, "") // Clean phone number
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            console.log("✅ OTP request successful", response.data);
+
+            // Close phone modal, show OTP modal
+            setShowPhoneModal(false);
+            setOtpChannel("mobile");
+            setShowOTPModal(true);
+            setIsProcessing(false);
+        } catch (error: any) {
+            console.error("Error requesting SMS OTP:", error);
+            setPhoneError(error.response?.data?.message || "Failed to send OTP. Please try again.");
             setIsProcessing(false);
         }
     };
@@ -257,6 +335,66 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
                     </>
                 )}
             </div>
+
+            {/* Phone Number Modal for SMS languages */}
+            {showPhoneModal && pendingLanguage && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+                        <h2 className="text-xl font-bold mb-4">Enter Phone Number</h2>
+                        <p className="text-gray-600 mb-4">
+                            To change your language to{" "}
+                            <strong>
+                                {languages.find(l => l.code === pendingLanguage)?.name}
+                            </strong>
+                            , please enter your Indian phone number to receive an OTP via SMS.
+                        </p>
+
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Phone Number
+                            </label>
+                            <input
+                                type="tel"
+                                value={phoneNumber}
+                                onChange={(e) => {
+                                    setPhoneNumber(e.target.value);
+                                    setPhoneError("");
+                                }}
+                                placeholder="9876543210"
+                                maxLength={10}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                            <p className="text-xs text-gray-500 mt-1">
+                                Enter 10-digit Indian phone number (starting with 6-9)
+                            </p>
+                            {phoneError && (
+                                <p className="text-sm text-red-600 mt-2">{phoneError}</p>
+                            )}
+                        </div>
+
+                        <div className="flex gap-3">
+                            <button
+                                onClick={() => {
+                                    setShowPhoneModal(false);
+                                    setPendingLanguage("");
+                                    setPhoneNumber("");
+                                    setPhoneError("");
+                                }}
+                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handlePhoneSubmit}
+                                disabled={isProcessing || !phoneNumber}
+                                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {isProcessing ? "Sending..." : "Send OTP"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* OTP Modal - Rendered at ROOT level with fixed positioning */}
             {showOTPModal && pendingLanguage && (
