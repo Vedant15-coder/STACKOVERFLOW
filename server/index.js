@@ -22,10 +22,24 @@ app.use(express.urlencoded({ limit: "30mb", extended: true }));
 
 // CORS configuration for production
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL,
-    "http://localhost:3000"
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    // Allow localhost
+    if (origin.includes('localhost')) return callback(null, true);
+
+    // Allow any Vercel deployment
+    if (origin.includes('.vercel.app')) return callback(null, true);
+
+    // Allow specific frontend URL from env
+    if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
+      return callback(null, true);
+    }
+
+    // Reject all other origins
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
