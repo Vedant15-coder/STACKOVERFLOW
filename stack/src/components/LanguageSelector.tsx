@@ -235,7 +235,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
 
             // Close phone modal, show OTP modal
             setShowPhoneModal(false);
-            setOtpChannel("mobile");
+            setOtpChannel("email"); // OTP sent via email (not SMS)
             setShowOTPModal(true);
             setIsProcessing(false);
         } catch (error: any) {
@@ -346,7 +346,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
                             <strong>
                                 {languages.find(l => l.code === pendingLanguage)?.name}
                             </strong>
-                            , please enter your Indian phone number to receive an OTP via SMS.
+                            , please enter your Indian phone number. You will receive an OTP via email.
                         </p>
 
                         <div className="mb-4">

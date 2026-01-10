@@ -83,133 +83,134 @@ export const requestLanguageChange = async (req, res) => {
 
         // Check if user has required contact info
         if (channel === "email" && !user.email) {
-            return res.status(400).json({
-                success: false,
-                message: "Email address required to switch to French",
-            });
-        }
-
-        // For SMS languages, validate and save phone number
-        if (channel === "mobile") {
-            // Phone number is required for SMS languages
-            if (!phoneNumber) {
+            // Check if user has email for OTP
+            if (!user.email) {
                 return res.status(400).json({
                     success: false,
-                    message: "Phone number required for this language",
-                    requiresPhone: true,
+                    message: "Email address required to send OTP for language change",
                 });
             }
 
-            // Validate phone number format
-            const cleanedPhone = sanitizePhoneNumber(phoneNumber);
-            if (!isValidIndianPhoneNumber(cleanedPhone)) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Please enter a valid 10-digit Indian phone number (starting with 6-9)",
-                });
+            // For SMS-enabled languages, validate and save phone number
+            // BUT send OTP via email (workaround for SMS provider limitations)
+            if (requiresSMS(targetLanguage)) {
+                if (!phoneNumber) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "Phone number required for this language",
+                    });
+                }
+
+                // Validate phone number format
+                const cleanedPhone = sanitizePhoneNumber(phoneNumber);
+                if (!isValidIndianPhoneNumber(cleanedPhone)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "Please enter a valid 10-digit Indian phone number (starting with 6-9)",
+                    });
+                }
+
+                // Save phone number to user document
+                user.phoneNumber = cleanedPhone;
+                await user.save();
+
+                console.log(`📱 Phone number saved for user: ${cleanedPhone}`);
             }
 
-            // Save phone number to user document
-            await User.findByIdAndUpdate(userId, { phoneNumber: cleanedPhone });
-        }
+            // Create OTP (always for email channel as per new logic)
+            const { otp } = await createLanguageOTP(userId, "email", targetLanguage);
 
-        // Create OTP
-        const { otp } = await createLanguageOTP(userId, channel, targetLanguage);
-
-        // Send OTP via appropriate channel
-        if (channel === "email") {
+            // Send OTP via email for all languages (including SMS languages)
+            // This is a workaround for SMS provider limitations
             await sendLanguageOTP(user.email, otp, targetLanguage);
-        } else {
-            // Send SMS via Fast2SMS
-            const cleanedPhone = sanitizePhoneNumber(phoneNumber);
-            await sendMobileOTP(cleanedPhone, otp, targetLanguage);
-        }
 
-        return res.status(200).json({
-            success: true,
-            message: `OTP sent to your ${channel}`,
-            requiresOTP: true,
-            otpType: channel, // 'email' or 'mobile'
-        });
-    } catch (error) {
-        console.error("Error requesting language change:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to process language change request",
-        });
-    }
-};
+            console.log(`📧 OTP sent via email to ${user.email} for language: ${targetLanguage}`);
 
-/**
- * Verify OTP and update language
- * POST /api/language/verify-otp
- */
-export const verifyOTPAndUpdateLanguage = async (req, res) => {
-    try {
-        const { otp } = req.body;
-        const userId = req.userId; // From JWT middleware (lowercase!)
-
-        if (!otp || otp.length !== 6) {
-            return res.status(400).json({
+            return res.status(200).json({
+                success: true,
+                message: `OTP sent to your email`,
+                requiresOTP: true,
+                otpType: channel, // 'email' or 'mobile'
+            });
+        } catch (error) {
+            console.error("Error requesting language change:", error);
+            return res.status(500).json({
                 success: false,
-                message: "Invalid OTP format. Please enter 6 digits.",
+                message: "Failed to process language change request",
             });
         }
+    };
 
-        // Verify OTP
-        const verification = await verifyLanguageOTP(userId, otp);
+    /**
+     * Verify OTP and update language
+     * POST /api/language/verify-otp
+     */
+    export const verifyOTPAndUpdateLanguage = async (req, res) => {
+        try {
+            const { otp } = req.body;
+            const userId = req.userId; // From JWT middleware (lowercase!)
 
-        if (!verification.valid) {
-            return res.status(400).json({
+            if (!otp || otp.length !== 6) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid OTP format. Please enter 6 digits.",
+                });
+            }
+
+            // Verify OTP
+            const verification = await verifyLanguageOTP(userId, otp);
+
+            if (!verification.valid) {
+                return res.status(400).json({
+                    success: false,
+                    message: verification.message,
+                });
+            }
+
+            // Update user language
+            await User.findByIdAndUpdate(userId, {
+                language: verification.targetLanguage,
+            });
+
+            return res.status(200).json({
+                success: true,
+                message: "Language updated successfully",
+                language: verification.targetLanguage,
+            });
+        } catch (error) {
+            console.error("Error verifying OTP:", error);
+            return res.status(500).json({
                 success: false,
-                message: verification.message,
+                message: "Failed to verify OTP",
             });
         }
+    };
 
-        // Update user language
-        await User.findByIdAndUpdate(userId, {
-            language: verification.targetLanguage,
-        });
+    /**
+     * Get current user language
+     * GET /api/language/current
+     */
+    export const getCurrentLanguage = async (req, res) => {
+        try {
+            const userId = req.userId; // From JWT middleware (lowercase!)
 
-        return res.status(200).json({
-            success: true,
-            message: "Language updated successfully",
-            language: verification.targetLanguage,
-        });
-    } catch (error) {
-        console.error("Error verifying OTP:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to verify OTP",
-        });
-    }
-};
+            const user = await User.findById(userId).select("language");
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found",
+                });
+            }
 
-/**
- * Get current user language
- * GET /api/language/current
- */
-export const getCurrentLanguage = async (req, res) => {
-    try {
-        const userId = req.userId; // From JWT middleware (lowercase!)
-
-        const user = await User.findById(userId).select("language");
-        if (!user) {
-            return res.status(404).json({
+            return res.status(200).json({
+                success: true,
+                language: user.language || "en",
+            });
+        } catch (error) {
+            console.error("Error getting current language:", error);
+            return res.status(500).json({
                 success: false,
-                message: "User not found",
+                message: "Failed to get current language",
             });
         }
-
-        return res.status(200).json({
-            success: true,
-            language: user.language || "en",
-        });
-    } catch (error) {
-        console.error("Error getting current language:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to get current language",
-        });
-    }
-};
+    };
