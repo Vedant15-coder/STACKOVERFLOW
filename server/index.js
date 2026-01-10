@@ -73,8 +73,6 @@ process.on('uncaughtException', (error) => {
 // Connect to MongoDB FIRST, then start server
 mongoose
   .connect(databaseurl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
     socketTimeoutMS: 45000,
   })
