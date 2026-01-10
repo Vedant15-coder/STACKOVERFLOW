@@ -260,7 +260,7 @@ const SubscriptionPage = () => {
                                 </div>
                             </div>
                             <span className="text-xl font-bold text-gray-800">
-                                stack<span className="font-normal">overflow</span>
+                                Dev<span className="font-normal">Query</span>
                             </span>
                         </Link>
                         <Button
