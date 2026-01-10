@@ -5,7 +5,8 @@ import {
     canRequestOTP,
 } from "../services/otpService.js";
 import { sendLanguageOTP } from "../utils/emailServiceSendGrid.js";
-import { sendMobileOTP } from "../services/smsService.js";
+import { sendMobileOTP } from "../services/smsServiceFast2SMS.js";
+import { isValidIndianPhoneNumber, sanitizePhoneNumber } from "../utils/phoneValidator.js";
 
 /**
  * Language Controller
@@ -36,7 +37,7 @@ const getOTPChannel = (targetLanguage) => {
  */
 export const requestLanguageChange = async (req, res) => {
     try {
-        const { targetLanguage } = req.body;
+        const { targetLanguage, phoneNumber } = req.body;
         const userId = req.userId; // From JWT middleware (lowercase!)
 
         // Validation
@@ -88,9 +89,29 @@ export const requestLanguageChange = async (req, res) => {
             });
         }
 
-        // Note: Mobile number field doesn't exist in current schema
-        // For now, we'll use email as fallback for mobile OTP in development
-        // In production, add mobile field to User schema
+        // For SMS languages, validate and save phone number
+        if (channel === "mobile") {
+            // Phone number is required for SMS languages
+            if (!phoneNumber) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Phone number required for this language",
+                    requiresPhone: true,
+                });
+            }
+
+            // Validate phone number format
+            const cleanedPhone = sanitizePhoneNumber(phoneNumber);
+            if (!isValidIndianPhoneNumber(cleanedPhone)) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Please enter a valid 10-digit Indian phone number (starting with 6-9)",
+                });
+            }
+
+            // Save phone number to user document
+            await User.findByIdAndUpdate(userId, { phoneNumber: cleanedPhone });
+        }
 
         // Create OTP
         const { otp } = await createLanguageOTP(userId, channel, targetLanguage);
@@ -99,8 +120,9 @@ export const requestLanguageChange = async (req, res) => {
         if (channel === "email") {
             await sendLanguageOTP(user.email, otp, targetLanguage);
         } else {
-            // Mock mobile OTP (use email as phone for development)
-            await sendMobileOTP(user.email, otp, targetLanguage);
+            // Send SMS via Fast2SMS
+            const cleanedPhone = sanitizePhoneNumber(phoneNumber);
+            await sendMobileOTP(cleanedPhone, otp, targetLanguage);
         }
 
         return res.status(200).json({

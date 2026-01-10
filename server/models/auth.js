@@ -39,6 +39,18 @@ const userschema = mongoose.Schema({
     enum: ["en", "hi", "es", "pt", "fr", "zh"],
     default: "en",
   },
+  // Phone number for SMS OTP (optional, for language changes)
+  phoneNumber: {
+    type: String,
+    default: null,
+    validate: {
+      validator: function (v) {
+        // Allow null or valid 10-digit Indian phone number
+        return v === null || /^[6-9]\d{9}$/.test(v);
+      },
+      message: 'Phone number must be a valid 10-digit Indian number starting with 6-9'
+    }
+  },
   // Subscription fields (backward-compatible with defaults)
   subscription: {
     plan: {
