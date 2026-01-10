@@ -34,14 +34,19 @@ app.use(
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
+      } else {
+        console.log("❌ Blocked by CORS:", origin);
+        return callback(new Error("Not allowed by CORS"));
       }
-
-      console.log("Blocked by CORS:", origin);
-      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// IMPORTANT: Handle preflight requests
+app.options("*", cors());
 
 // Health check endpoint
 app.get("/health", (req, res) => {
