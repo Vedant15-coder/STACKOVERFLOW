@@ -5,7 +5,7 @@ import {
     canRequestOTP,
 } from "../services/otpService.js";
 import { sendLanguageOTP } from "../utils/emailServiceSendGrid.js";
-import { sendMobileOTP } from "../services/smsServiceFast2SMS.js";
+import { sendMobileOTP } from "../services/smsServiceTwilio.js";
 import { isValidIndianPhoneNumber, sanitizePhoneNumber } from "../utils/phoneValidator.js";
 
 /**
