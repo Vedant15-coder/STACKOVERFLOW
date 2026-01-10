@@ -127,7 +127,7 @@ export const requestLanguageChange = async (req, res) => {
         }
 
         // Create OTP (always for email channel as per new logic)
-        const otp = await createLanguageOTP(userId, "email", targetLanguage);
+        const { otp } = await createLanguageOTP(userId, "email", targetLanguage);
 
         // Send OTP via email for all languages (including SMS languages)
         // This is a workaround for SMS provider limitations
