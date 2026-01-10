@@ -4,7 +4,7 @@ import {
     verifyLanguageOTP,
     canRequestOTP,
 } from "../services/otpService.js";
-import { sendLanguageOTP } from "../utils/emailService.js";
+import { sendLanguageOTP } from "../utils/emailServiceSendGrid.js";
 import { sendMobileOTP } from "../services/smsService.js";
 
 /**

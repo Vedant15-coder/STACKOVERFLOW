@@ -32,7 +32,7 @@ import {
     calculateSubscriptionExpiry,
     getQuestionLimit,
 } from "../utils/subscriptionUtils.js";
-import { sendInvoiceEmail } from "../utils/emailService.js";
+import { sendInvoiceEmail } from "../utils/emailServiceSendGrid.js";
 import {
     getMockRazorpayInstance,
     verifyMockSignature,

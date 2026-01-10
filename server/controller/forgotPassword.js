@@ -1,7 +1,7 @@
 import User from "../models/auth.js";
 import bcrypt from "bcryptjs";
 import { generatePassword } from "../utils/passwordGenerator.js";
-import { sendPasswordEmail, isValidEmail } from "../utils/emailService.js";
+import { sendPasswordEmail, isValidEmail } from "../utils/emailServiceSendGrid.js";
 
 /**
  * Forgot Password Controller

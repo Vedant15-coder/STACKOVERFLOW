@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { getDeviceInfo } from "../utils/deviceDetection.js";
 import { evaluateAccessRules, determineLoginMethod } from "../utils/conditionalAccess.js";
 import { createLoginOTP, verifyLoginOTP as verifyOTPService, canRequestLoginOTP } from "../services/otpService.js";
-import { sendLoginOTP } from "../utils/emailService.js";
+import { sendLoginOTP } from "../utils/emailServiceSendGrid.js";
 import LoginHistory from "../models/LoginHistory.js";
 
 export const Signup = async (req, res) => {
