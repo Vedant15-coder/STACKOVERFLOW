@@ -38,18 +38,23 @@ export const sendLanguageSMS = async (phoneNumber, otp, targetLanguage) => {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        // 2Factor.in SMS API endpoint - using custom message to ensure SMS delivery
+        // Use 2Factor.in Transactional SMS API (not OTP API) to ensure SMS delivery
+        // OTP API defaults to voice, Transactional SMS API sends actual SMS
         const message = `Your DevQuery language change OTP is ${otp}. Valid for 5 minutes. Do not share this code.`;
-        const url = `https://2factor.in/API/V1/${apiKey}/SMS/${phoneNumber}/${otp}`;
+        const url = `https://2factor.in/API/V1/${apiKey}/ADDON_SERVICES/SEND/TSMS`;
 
-        const response = await axios.get(url, {
-            params: {
-                template_name: message // Custom message ensures SMS delivery
+        const response = await axios.post(url, {
+            From: 'DVQURY', // 6-char sender ID
+            To: phoneNumber,
+            Msg: message
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
             },
             timeout: 10000 // 10 second timeout
         });
 
-        if (response.data && response.data.Status === 'Success') {
+        if (response.data && (response.data.Status === 'Success' || response.data.Details)) {
             console.log(`✅ SMS OTP sent successfully to +91${phoneNumber}`);
             return { success: true };
         } else {
@@ -111,18 +116,22 @@ export const sendLoginSMS = async (phoneNumber, otp) => {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        // 2Factor.in SMS API endpoint - using custom message to ensure SMS delivery
+        // Use 2Factor.in Transactional SMS API (not OTP API) to ensure SMS delivery
         const message = `Your DevQuery login OTP is ${otp}. Valid for 5 minutes. Do not share this code.`;
-        const url = `https://2factor.in/API/V1/${apiKey}/SMS/${phoneNumber}/${otp}`;
+        const url = `https://2factor.in/API/V1/${apiKey}/ADDON_SERVICES/SEND/TSMS`;
 
-        const response = await axios.get(url, {
-            params: {
-                template_name: message // Custom message ensures SMS delivery
+        const response = await axios.post(url, {
+            From: 'DVQURY', // 6-char sender ID
+            To: phoneNumber,
+            Msg: message
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
             },
             timeout: 10000
         });
 
-        if (response.data && response.data.Status === 'Success') {
+        if (response.data && (response.data.Status === 'Success' || response.data.Details)) {
             console.log(`✅ Login SMS OTP sent successfully to +91${phoneNumber}`);
             return { success: true };
         } else {
