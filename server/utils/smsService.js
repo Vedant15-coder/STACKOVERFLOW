@@ -38,8 +38,9 @@ export const sendLanguageSMS = async (phoneNumber, otp, targetLanguage) => {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        // Step 1: Send OTP via SMS using Session API (guaranteed SMS delivery)
-        const sendUrl = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}`;
+        // Step 1: Send OTP via SMS using APPROVED template from 2Factor.in dashboard
+        // Template: DEVQUERY_OTP (APPROVED status)
+        const sendUrl = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}/DEVQUERY_OTP`;
 
         try {
             const response = await axios.get(sendUrl, {
@@ -118,8 +119,9 @@ export const sendLoginSMS = async (phoneNumber, otp) => {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        // Send OTP via SMS using Session API
-        const sendUrl = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}`;
+        // Send OTP via SMS using APPROVED template from 2Factor.in dashboard
+        // Template: DEVQUERY_OTP (APPROVED status)
+        const sendUrl = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}/DEVQUERY_OTP`;
 
         try {
             const response = await axios.get(sendUrl, {
