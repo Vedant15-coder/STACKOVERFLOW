@@ -45,7 +45,7 @@ export const sendLanguageSMS = async (phoneNumber, otp, targetLanguage) => {
 
         const response = await axios.post(url, {
             From: 'DVQURY', // 6-char sender ID
-            To: phoneNumber,
+            To: `91${phoneNumber}`, // Add country code (91 for India)
             Msg: message
         }, {
             headers: {
@@ -122,7 +122,7 @@ export const sendLoginSMS = async (phoneNumber, otp) => {
 
         const response = await axios.post(url, {
             From: 'DVQURY', // 6-char sender ID
-            To: phoneNumber,
+            To: `91${phoneNumber}`, // Add country code (91 for India)
             Msg: message
         }, {
             headers: {
