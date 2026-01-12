@@ -32,30 +32,39 @@ export const sendLanguageSMS = async (phoneNumber, otp, targetLanguage) => {
             return { success: true };
         }
 
-        // Production mode - send via 2Factor.in
+        // Production mode - send via 2Factor.in Session-based SMS API
         const apiKey = process.env.TWOFACTOR_API_KEY;
         if (!apiKey) {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        // Use 2Factor.in SMS API with OTP as template variable
-        // This sends SMS (not voice) with our custom OTP
-        const url = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}/DevQuery`;
+        // Step 1: Send OTP via SMS using Session API (guaranteed SMS delivery)
+        const sendUrl = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}`;
 
-        const response = await axios.get(url, {
-            timeout: 10000 // 10 second timeout
-        });
+        try {
+            const response = await axios.get(sendUrl, {
+                timeout: 10000
+            });
 
-        if (response.data && response.data.Status === 'Success') {
-            console.log(`✅ SMS OTP sent successfully to +91${phoneNumber}`);
-            console.log(`📱 2Factor.in Response:`, response.data);
-            return { success: true };
-        } else {
-            console.error('2Factor.in API error:', response.data);
-            return {
-                success: false,
-                message: 'Failed to send SMS. Please try again later.'
-            };
+            console.log(`📱 2Factor.in Full Response:`, JSON.stringify(response.data, null, 2));
+
+            if (response.data && response.data.Status === 'Success') {
+                console.log(`✅ SMS OTP sent successfully to +91${phoneNumber}`);
+                console.log(`📱 Session ID:`, response.data.Details);
+                return { success: true };
+            } else {
+                console.error('❌ 2Factor.in API error:', response.data);
+                return {
+                    success: false,
+                    message: 'Failed to send SMS. Please try again later.'
+                };
+            }
+        } catch (error) {
+            console.error('❌ Error sending SMS OTP:', error.message);
+            if (error.response) {
+                console.error('❌ API Response:', error.response.data);
+            }
+            throw error;
         }
 
     } catch (error) {
@@ -103,29 +112,39 @@ export const sendLoginSMS = async (phoneNumber, otp) => {
             return { success: true };
         }
 
-        // Production mode - send via 2Factor.in
+        // Production mode - send via 2Factor.in Session-based SMS API
         const apiKey = process.env.TWOFACTOR_API_KEY;
         if (!apiKey) {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        // Use 2Factor.in SMS API with OTP as template variable
-        const url = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}/DevQuery`;
+        // Send OTP via SMS using Session API
+        const sendUrl = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}`;
 
-        const response = await axios.get(url, {
-            timeout: 10000
-        });
+        try {
+            const response = await axios.get(sendUrl, {
+                timeout: 10000
+            });
 
-        if (response.data && response.data.Status === 'Success') {
-            console.log(`✅ Login SMS OTP sent successfully to +91${phoneNumber}`);
-            console.log(`📱 2Factor.in Response:`, response.data);
-            return { success: true };
-        } else {
-            console.error('2Factor.in API error:', response.data);
-            return {
-                success: false,
-                message: 'Failed to send SMS. Please try again later.'
-            };
+            console.log(`📱 2Factor.in Full Response:`, JSON.stringify(response.data, null, 2));
+
+            if (response.data && response.data.Status === 'Success') {
+                console.log(`✅ Login SMS OTP sent successfully to +91${phoneNumber}`);
+                console.log(`📱 Session ID:`, response.data.Details);
+                return { success: true };
+            } else {
+                console.error('❌ 2Factor.in API error:', response.data);
+                return {
+                    success: false,
+                    message: 'Failed to send SMS. Please try again later.'
+                };
+            }
+        } catch (error) {
+            console.error('❌ Error sending login SMS OTP:', error.message);
+            if (error.response) {
+                console.error('❌ API Response:', error.response.data);
+            }
+            throw error;
         }
 
     } catch (error) {
