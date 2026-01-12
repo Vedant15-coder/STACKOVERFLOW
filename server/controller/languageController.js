@@ -4,9 +4,8 @@ import {
     verifyLanguageOTP,
     canRequestOTP,
 } from "../services/otpService.js";
-import { sendLanguageOTP } from "../utils/emailServiceSendGrid.js";
-import { sendMobileOTP } from "../services/smsServiceTwilio.js";
-import { isValidIndianPhoneNumber, sanitizePhoneNumber } from "../utils/phoneValidator.js";
+import { sendLanguageOTP, shouldUseSMS } from "../utils/emailService.js";
+import { sendLanguageSMS, isValidPhoneNumber } from "../utils/smsService.js";
 
 /**
  * Language Controller
@@ -19,26 +18,8 @@ import { isValidIndianPhoneNumber, sanitizePhoneNumber } from "../utils/phoneVal
  * @returns {boolean} True if OTP required
  */
 const requiresOTP = (targetLanguage) => {
-    return targetLanguage !== "en";
-};
-
-/**
- * Determine OTP channel based on target language
- * @param {string} targetLanguage - Language code
- * @returns {string} 'email' for French, 'mobile' for others
- */
-const getOTPChannel = (targetLanguage) => {
-    return targetLanguage === "fr" ? "email" : "mobile";
-};
-
-/**
- * Check if target language requires SMS/phone number
- * @param {string} targetLanguage - Language code
- * @returns {boolean} True if phone number required
- */
-const requiresSMS = (targetLanguage) => {
-    // Hindi, Spanish, Portuguese, Chinese require phone numbers
-    return ["hi", "es", "pt", "zh"].includes(targetLanguage);
+    // All languages require OTP (no exceptions)
+    return true;
 };
 
 
@@ -60,16 +41,8 @@ export const requestLanguageChange = async (req, res) => {
             });
         }
 
-        // If switching to English, no OTP required
-        if (!requiresOTP(targetLanguage)) {
-            // Update language directly
-            await User.findByIdAndUpdate(userId, { language: targetLanguage });
-            return res.status(200).json({
-                success: true,
-                message: "Language updated successfully",
-                requiresOTP: false,
-            });
-        }
+        // All languages now require OTP verification
+        // (This block is kept for backward compatibility but will never execute)
 
         // Check rate limiting
         const canRequest = await canRequestOTP(userId);
@@ -90,57 +63,80 @@ export const requestLanguageChange = async (req, res) => {
         }
 
 
-        // Check if user has email for OTP (OTP is always sent via email for now)
-        if (!user.email) {
-            return res.status(400).json({
-                success: false,
-                message: "Email address required to send OTP for language change",
-            });
-        }
+        // Determine delivery method based on target language
+        const useSMS = shouldUseSMS(targetLanguage);
 
-        // For SMS-enabled languages, validate and save phone number
-        // BUT send OTP via email (workaround for SMS provider limitations)
-        if (requiresSMS(targetLanguage)) {
-            const phoneNumber = req.body.phoneNumber;
+        if (useSMS) {
+            // SMS languages: es, hi, pt, zh, en
+            // Check if phone number is provided or already exists
+            let phoneToUse = user.phoneNumber;
 
-            if (!phoneNumber) {
+            if (phoneNumber) {
+                // Validate and save new phone number
+                if (!isValidPhoneNumber(phoneNumber)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: "Please enter a valid 10-digit Indian phone number (starting with 6-9)",
+                    });
+                }
+                phoneToUse = phoneNumber;
+                user.phoneNumber = phoneNumber;
+                await user.save();
+                console.log(`📱 Phone number saved for user: ${phoneNumber}`);
+            } else if (!phoneToUse) {
+                // No phone number provided and none on file
                 return res.status(400).json({
                     success: false,
                     message: "Phone number required for this language",
+                    requiresPhoneNumber: true,
                 });
             }
 
-            // Validate phone number format
-            const cleanedPhone = sanitizePhoneNumber(phoneNumber);
-            if (!isValidIndianPhoneNumber(cleanedPhone)) {
+            // Create OTP for SMS channel
+            const { otp } = await createLanguageOTP(userId, "mobile", targetLanguage);
+
+            // Send OTP via SMS using 2Factor.in
+            const smsResult = await sendLanguageSMS(phoneToUse, otp, targetLanguage);
+
+            if (!smsResult.success) {
+                return res.status(500).json({
+                    success: false,
+                    message: smsResult.message || "Failed to send SMS. Please try again.",
+                });
+            }
+
+            console.log(`📱 OTP sent via SMS to ${phoneToUse} for language: ${targetLanguage}`);
+
+            return res.status(200).json({
+                success: true,
+                message: `OTP sent to your phone ending in ${phoneToUse.slice(-4)}`,
+                requiresOTP: true,
+                channel: "sms",
+            });
+        } else {
+            // Email language: fr (French)
+            if (!user.email) {
                 return res.status(400).json({
                     success: false,
-                    message: "Please enter a valid 10-digit Indian phone number (starting with 6-9)",
+                    message: "Email address required to send OTP for language change",
                 });
             }
 
-            // Save phone number to user document
-            user.phoneNumber = cleanedPhone;
-            await user.save();
+            // Create OTP for email channel
+            const { otp } = await createLanguageOTP(userId, "email", targetLanguage);
 
-            console.log(`📱 Phone number saved for user: ${cleanedPhone}`);
+            // Send OTP via email
+            await sendLanguageOTP(user.email, otp, targetLanguage);
+
+            console.log(`📧 OTP sent via email to ${user.email} for language: ${targetLanguage}`);
+
+            return res.status(200).json({
+                success: true,
+                message: `OTP sent to your email`,
+                requiresOTP: true,
+                channel: "email",
+            });
         }
-
-        // Create OTP (always for email channel as per new logic)
-        const { otp } = await createLanguageOTP(userId, "email", targetLanguage);
-
-        // Send OTP via email for all languages (including SMS languages)
-        // This is a workaround for SMS provider limitations
-        await sendLanguageOTP(user.email, otp, targetLanguage);
-
-        console.log(`📧 OTP sent via email to ${user.email} for language: ${targetLanguage}`);
-
-        return res.status(200).json({
-            success: true,
-            message: `OTP sent to your email`,
-            requiresOTP: true,
-            otpType: "email",
-        });
     } catch (error) {
         console.error("Error requesting language change:", error);
         return res.status(500).json({

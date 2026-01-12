@@ -15,7 +15,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
     const [phoneNumber, setPhoneNumber] = useState("");
     const [phoneError, setPhoneError] = useState("");
     const [pendingLanguage, setPendingLanguage] = useState<string>(""); // Language waiting for OTP
-    const [otpChannel, setOtpChannel] = useState<"email" | "mobile">("email");
+    const [otpChannel, setOtpChannel] = useState<"email" | "sms">("email");
     const [isProcessing, setIsProcessing] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
 
@@ -72,10 +72,10 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
     };
 
     /**
-     * Check if language requires SMS OTP (Hindi, Spanish, Portuguese, Chinese)
+     * Check if language requires SMS OTP (Spanish, Hindi, Portuguese, Chinese, English)
      */
     const requiresSMS = (languageCode: string): boolean => {
-        return ["hi", "es", "pt", "zh"].includes(languageCode);
+        return ["hi", "es", "pt", "zh", "en"].includes(languageCode);
     };
 
     const handleLanguageSelect = async (languageCode: string) => {
@@ -152,7 +152,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
                 if (response.data.requiresOTP) {
                     // Store pending language (NOT applied yet)
                     setPendingLanguage(languageCode);
-                    setOtpChannel(response.data.otpType); // 'email' or 'mobile'
+                    setOtpChannel(response.data.channel || "email"); // 'sms' or 'email'
                     setShowOTPModal(true);
 
                     // DEBUG: Log state changes
@@ -235,7 +235,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
 
             // Close phone modal, show OTP modal
             setShowPhoneModal(false);
-            setOtpChannel("email"); // OTP sent via email (not SMS)
+            setOtpChannel(response.data.channel || "sms"); // Use channel from backend response
             setShowOTPModal(true);
             setIsProcessing(false);
         } catch (error: any) {
@@ -346,7 +346,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
                             <strong>
                                 {languages.find(l => l.code === pendingLanguage)?.name}
                             </strong>
-                            , please enter your Indian phone number. You will receive an OTP via email.
+                            , please enter your Indian phone number. You will receive an OTP via SMS.
                         </p>
 
                         <div className="mb-4">

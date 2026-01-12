@@ -200,3 +200,14 @@ export const sendLoginOTP = async (email, otp, browser = 'Chrome', os = 'Unknown
         return { success: false, message: 'Failed to send OTP email. Please try again later.' };
     }
 };
+
+/**
+ * Determine if a language should use SMS for OTP delivery
+ * @param {string} targetLanguage - Language code (es, hi, pt, zh, en, fr)
+ * @returns {boolean} - true if SMS should be used, false if email
+ */
+export const shouldUseSMS = (targetLanguage) => {
+    const smsLanguages = ['es', 'hi', 'pt', 'zh', 'en'];
+    return smsLanguages.includes(targetLanguage);
+};
+

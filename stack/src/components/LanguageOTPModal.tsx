@@ -4,7 +4,7 @@ import axios from "../lib/axiosinstance";
 
 interface LanguageOTPModalProps {
     targetLanguage: string;
-    channel: "email" | "mobile";
+    channel: "email" | "sms";
     onClose: () => void;
     onVerified: () => void;
 }
@@ -205,7 +205,7 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
                             </span>
                             <div>
                                 <p className="text-sm font-medium text-blue-900">
-                                    We've sent a 6-digit OTP to your registered {channel === "email" ? "email address" : "mobile number"}
+                                    We've sent a 6-digit OTP to your registered {channel === "email" ? "email address" : "phone number"}
                                 </p>
                                 <p className="text-xs text-blue-700 mt-1">
                                     Please enter the code below to continue
