@@ -38,10 +38,14 @@ export const sendLanguageSMS = async (phoneNumber, otp, targetLanguage) => {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        // 2Factor.in API endpoint
-        const url = `https://2factor.in/API/V1/${apiKey}/SMS/${phoneNumber}/${otp}/AUTOGEN`;
+        // 2Factor.in SMS API endpoint - using custom message to ensure SMS delivery
+        const message = `Your DevQuery language change OTP is ${otp}. Valid for 5 minutes. Do not share this code.`;
+        const url = `https://2factor.in/API/V1/${apiKey}/SMS/${phoneNumber}/${otp}`;
 
         const response = await axios.get(url, {
+            params: {
+                template_name: message // Custom message ensures SMS delivery
+            },
             timeout: 10000 // 10 second timeout
         });
 
@@ -107,9 +111,14 @@ export const sendLoginSMS = async (phoneNumber, otp) => {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        const url = `https://2factor.in/API/V1/${apiKey}/SMS/${phoneNumber}/${otp}/AUTOGEN`;
+        // 2Factor.in SMS API endpoint - using custom message to ensure SMS delivery
+        const message = `Your DevQuery login OTP is ${otp}. Valid for 5 minutes. Do not share this code.`;
+        const url = `https://2factor.in/API/V1/${apiKey}/SMS/${phoneNumber}/${otp}`;
 
         const response = await axios.get(url, {
+            params: {
+                template_name: message // Custom message ensures SMS delivery
+            },
             timeout: 10000
         });
 
