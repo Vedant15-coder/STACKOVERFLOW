@@ -38,9 +38,9 @@ export const sendLanguageSMS = async (phoneNumber, otp, targetLanguage) => {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        // Use 2Factor.in basic SMS API with OTP in URL (works with free tier)
-        // Format: /SMS/+91{phone}/{otp} sends SMS with just the OTP number
-        const url = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}`;
+        // Use 2Factor.in SMS API with OTP as template variable
+        // This sends SMS (not voice) with our custom OTP
+        const url = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}/DevQuery`;
 
         const response = await axios.get(url, {
             timeout: 10000 // 10 second timeout
@@ -109,8 +109,8 @@ export const sendLoginSMS = async (phoneNumber, otp) => {
             throw new Error('TWOFACTOR_API_KEY is not configured in environment variables');
         }
 
-        // Use 2Factor.in basic SMS API with OTP in URL (works with free tier)
-        const url = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}`;
+        // Use 2Factor.in SMS API with OTP as template variable
+        const url = `https://2factor.in/API/V1/${apiKey}/SMS/+91${phoneNumber}/${otp}/DevQuery`;
 
         const response = await axios.get(url, {
             timeout: 10000
