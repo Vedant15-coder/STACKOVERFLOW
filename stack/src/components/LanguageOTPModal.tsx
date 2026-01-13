@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "../lib/axiosinstance";
+import { ConfirmationResult } from "firebase/auth";
+import { verifySMSOTP } from "../services/firebaseSMSService";
 
 interface LanguageOTPModalProps {
     targetLanguage: string;
     channel: "email" | "mobile";
     onClose: () => void;
     onVerified: () => void;
+    // Firebase-specific props
+    firebaseConfirmationResult?: ConfirmationResult;
+    verificationMode?: "firebase" | "backend";
 }
 
 const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
@@ -14,9 +19,13 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
     channel,
     onClose,
     onVerified,
+    firebaseConfirmationResult,
+    verificationMode = "backend", // Default to backend for email
 }) => {
     const { t } = useTranslation();
-    const [otp, setOtp] = useState<string[]>(["", "", "", ""]); // 4-digit OTP
+    // Uniform 6-digit OTP for all channels (Firebase SMS and Email)
+    const otpLength = 6;
+    const [otp, setOtp] = useState<string[]>(Array(otpLength).fill(""));
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
@@ -65,7 +74,7 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
         setError(""); // Clear error on input
 
         // Auto-advance to next input
-        if (value && index < 3) { // Changed from 5 to 3
+        if (value && index < otpLength - 1) {
             inputRefs.current[index + 1]?.focus();
         }
     };
@@ -79,21 +88,21 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
         if (e.key === "v" && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
             navigator.clipboard.readText().then((text) => {
-                const digits = text.replace(/\D/g, "").slice(0, 4).split(""); // Changed from 6 to 4
+                const digits = text.replace(/\D/g, "").slice(0, otpLength).split("");
                 const newOtp = [...otp];
                 digits.forEach((digit, i) => {
-                    if (i < 4) newOtp[i] = digit; // Changed from 6 to 4
+                    if (i < otpLength) newOtp[i] = digit;
                 });
                 setOtp(newOtp);
-                inputRefs.current[Math.min(digits.length, 3)]?.focus(); // Changed from 5 to 3
+                inputRefs.current[Math.min(digits.length, otpLength - 1)]?.focus();
             });
         }
     };
 
     const handleVerify = async () => {
         const otpString = otp.join("");
-        if (otpString.length !== 4) { // Changed from 6 to 4
-            setError("Please enter all 4 digits"); // Changed from 6 to 4
+        if (otpString.length !== otpLength) {
+            setError(`Please enter all ${otpLength} digits`);
             setShake(true);
             setTimeout(() => setShake(false), 500);
             return;
@@ -103,28 +112,62 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
         setError("");
 
         try {
-            const token = localStorage.getItem("token");
-            const response = await axios.post(
-                "/api/language/verify-otp",
-                { otp: otpString },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+            if (verificationMode === "firebase") {
+                // Firebase SMS verification
+                if (!firebaseConfirmationResult) {
+                    throw new Error("Firebase confirmation result not found");
                 }
-            );
 
-            if (response.data.success) {
-                setSuccess(true);
-                setTimeout(() => {
-                    onVerified();
-                }, 800); // Smooth transition
+                // Verify OTP with Firebase
+                const firebaseUID = await verifySMSOTP(firebaseConfirmationResult, otpString);
+                console.log("✅ Firebase OTP verified, UID:", firebaseUID);
+
+                // Send Firebase UID to backend for final language update
+                const token = localStorage.getItem("token");
+                const response = await axios.post(
+                    "/api/language/verify-firebase",
+                    {
+                        firebaseUID,
+                        targetLanguage,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (response.data.success) {
+                    setSuccess(true);
+                    setTimeout(() => {
+                        onVerified();
+                    }, 800);
+                }
+            } else {
+                // Backend email OTP verification (existing flow)
+                const token = localStorage.getItem("token");
+                const response = await axios.post(
+                    "/api/language/verify-otp",
+                    { otp: otpString },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+                if (response.data.success) {
+                    setSuccess(true);
+                    setTimeout(() => {
+                        onVerified();
+                    }, 800);
+                }
             }
         } catch (err: any) {
-            setError(err.response?.data?.message || "Invalid OTP. Please try again.");
+            setError(err.response?.data?.message || err.message || "Invalid OTP. Please try again.");
             setShake(true);
             setTimeout(() => setShake(false), 500);
-            setOtp(["", "", "", ""]); // Changed from 6 to 4
+            setOtp(Array(otpLength).fill(""));
             inputRefs.current[0]?.focus();
         } finally {
             setLoading(false);
@@ -132,9 +175,16 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
     };
 
     const handleResend = async () => {
+        // Firebase SMS doesn't support resend from modal
+        // User must close and restart the flow
+        if (verificationMode === "firebase") {
+            setError("Please close this modal and request a new OTP");
+            return;
+        }
+
         setLoading(true);
         setError("");
-        setOtp(["", "", "", ""]); // Changed from 6 to 4
+        setOtp(Array(otpLength).fill(""));
 
         try {
             const token = localStorage.getItem("token");
@@ -206,10 +256,12 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
                             </span>
                             <div>
                                 <p className="text-sm font-medium text-blue-900">
-                                    We've sent a 4-digit OTP to your {channel === "email" ? "email address" : "phone number"}
+                                    We've sent a {otpLength}-digit OTP to your {channel === "email" ? "email address" : "phone number"}
                                 </p>
                                 <p className="text-xs text-blue-700 mt-1">
-                                    Please enter the code below to continue
+                                    {verificationMode === "firebase"
+                                        ? "SMS sent via Firebase (no voice calls)"
+                                        : "Please enter the code below to continue"}
                                 </p>
                             </div>
                         </div>
@@ -263,10 +315,10 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
                         </div>
                         <button
                             onClick={handleResend}
-                            disabled={loading || timeLeft > 0}
+                            disabled={loading || timeLeft > 0 || verificationMode === "firebase"}
                             className="text-blue-600 hover:text-blue-700 font-semibold disabled:text-gray-400 disabled:cursor-not-allowed transition-colors underline-offset-2 hover:underline"
                         >
-                            Resend OTP
+                            {verificationMode === "firebase" ? "Resend (restart flow)" : "Resend OTP"}
                         </button>
                     </div>
 
@@ -319,6 +371,9 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
                     </button>
                 </div>
             </div>
+
+            {/* reCAPTCHA container for Firebase Phone Authentication */}
+            <div id="recaptcha-container"></div>
 
             <style jsx>{`
                 @keyframes fadeIn {

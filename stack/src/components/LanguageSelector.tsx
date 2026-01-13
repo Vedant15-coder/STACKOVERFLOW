@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "../lib/axiosinstance";
 import LanguageOTPModal from "./LanguageOTPModal";
+import { ConfirmationResult } from "firebase/auth";
+import { sendSMSOTP, cleanupRecaptcha } from "../services/firebaseSMSService";
 
 interface LanguageSelectorProps {
     className?: string;
@@ -18,6 +20,10 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
     const [otpChannel, setOtpChannel] = useState<"email" | "mobile">("email");
     const [isProcessing, setIsProcessing] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
+
+    // Firebase-specific state
+    const [firebaseConfirmationResult, setFirebaseConfirmationResult] = useState<ConfirmationResult | undefined>();
+    const [verificationMode, setVerificationMode] = useState<"firebase" | "backend">("backend");
 
     // Prevent hydration mismatch
     useEffect(() => {
@@ -61,6 +67,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
         setOtpChannel("email");
         setPhoneNumber("");
         setPhoneError("");
+        setFirebaseConfirmationResult(undefined);
+        setVerificationMode("backend");
+        cleanupRecaptcha(); // Clean up Firebase reCAPTCHA
     };
 
     /**
@@ -211,36 +220,30 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
         setIsProcessing(true);
 
         try {
-            const token = localStorage.getItem("token");
-            if (!token || !pendingLanguage) {
+            if (!pendingLanguage) {
                 setIsProcessing(false);
                 return;
             }
 
-            console.log("📡 Sending OTP request with phone number");
-            const response = await axios.post(
-                "/api/language/request-otp",
-                {
-                    targetLanguage: pendingLanguage,
-                    phoneNumber: phoneNumber.replace(/[\s\-\(\)]/g, "") // Clean phone number
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            console.log("📱 Sending Firebase SMS OTP to:", phoneNumber);
 
-            console.log("✅ OTP request successful", response.data);
+            // Send SMS OTP via Firebase (SMS-only, no voice calls)
+            const confirmationResult = await sendSMSOTP(phoneNumber);
+
+            console.log("✅ Firebase SMS sent successfully");
+
+            // Store confirmation result for OTP verification
+            setFirebaseConfirmationResult(confirmationResult);
+            setVerificationMode("firebase");
 
             // Close phone modal, show OTP modal
             setShowPhoneModal(false);
-            setOtpChannel(response.data.channel || "sms"); // Use channel from backend response
+            setOtpChannel("mobile");
             setShowOTPModal(true);
             setIsProcessing(false);
         } catch (error: any) {
-            console.error("Error requesting SMS OTP:", error);
-            setPhoneError(error.response?.data?.message || "Failed to send OTP. Please try again.");
+            console.error("Error sending Firebase SMS OTP:", error);
+            setPhoneError(error.message || "Failed to send OTP. Please try again.");
             setIsProcessing(false);
         }
     };
@@ -403,6 +406,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
                     channel={otpChannel}
                     onClose={handleOTPCancel}
                     onVerified={handleOTPVerified}
+                    firebaseConfirmationResult={firebaseConfirmationResult}
+                    verificationMode={verificationMode}
                 />
             )}
         </>

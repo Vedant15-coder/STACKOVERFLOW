@@ -7,6 +7,7 @@ import {
 import { sendLanguageOTP } from "../utils/emailServiceSendGrid.js";
 import { sendMobileOTP } from "../services/smsService2Factor.js";
 import { isValidIndianPhoneNumber, sanitizePhoneNumber } from "../utils/phoneValidator.js";
+import { verifyFirebaseUID } from "../services/firebaseAdminService.js";
 
 /**
  * Language Controller
@@ -220,3 +221,62 @@ export const getCurrentLanguage = async (req, res) => {
         });
     }
 };
+
+/**
+ * Verify Firebase UID and update language
+ * POST /api/language/verify-firebase
+ * For SMS languages (en, hi, es, pt, zh) verified via Firebase Phone Authentication
+ */
+export const verifyFirebaseAndUpdateLanguage = async (req, res) => {
+    try {
+        const { firebaseUID, targetLanguage } = req.body;
+        const userId = req.userId; // From JWT middleware
+
+        // Validation
+        if (!firebaseUID) {
+            return res.status(400).json({
+                success: false,
+                message: "Firebase UID is required",
+            });
+        }
+
+        const validLanguages = ["en", "hi", "es", "pt", "fr", "zh"];
+        if (!validLanguages.includes(targetLanguage)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid language selected",
+            });
+        }
+
+        // Verify Firebase UID with Firebase Admin SDK
+        const isValidUID = await verifyFirebaseUID(firebaseUID);
+        if (!isValidUID) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid Firebase UID. Please try again.",
+            });
+        }
+
+        console.log(`✅ Firebase UID verified for user ${userId}`);
+
+        // Update user language in database
+        await User.findByIdAndUpdate(userId, {
+            language: targetLanguage,
+        });
+
+        console.log(`🌍 Language updated to ${targetLanguage} for user ${userId}`);
+
+        return res.status(200).json({
+            success: true,
+            message: "Language updated successfully",
+            language: targetLanguage,
+        });
+    } catch (error) {
+        console.error("Error verifying Firebase UID and updating language:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to verify and update language",
+        });
+    }
+};
+
