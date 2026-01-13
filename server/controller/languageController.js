@@ -4,8 +4,9 @@ import {
     verifyLanguageOTP,
     canRequestOTP,
 } from "../services/otpService.js";
-import { sendLanguageOTP, shouldUseSMS } from "../utils/emailService.js";
-import { sendLanguageSMS, isValidPhoneNumber } from "../utils/smsService.js";
+import { sendLanguageOTP } from "../utils/emailServiceSendGrid.js";
+import { sendMobileOTP } from "../services/smsService2Factor.js";
+import { isValidIndianPhoneNumber, sanitizePhoneNumber } from "../utils/phoneValidator.js";
 
 /**
  * Language Controller
@@ -14,12 +15,20 @@ import { sendLanguageSMS, isValidPhoneNumber } from "../utils/smsService.js";
 
 /**
  * Check if target language requires OTP verification
+ * All languages now require OTP (including English)
  * @param {string} targetLanguage - Language code
  * @returns {boolean} True if OTP required
  */
-const requiresOTP = (targetLanguage) => {
-    // All languages require OTP (no exceptions)
-    return true;
+const requiresOTP = () => true;
+
+/**
+ * Check if target language requires SMS/phone number
+ * @param {string} targetLanguage - Language code
+ * @returns {boolean} True if SMS required
+ */
+const requiresSMS = (targetLanguage) => {
+    // SMS languages: English, Hindi, Spanish, Portuguese, Chinese
+    return ["en", "hi", "es", "pt", "zh"].includes(targetLanguage);
 };
 
 
@@ -64,27 +73,12 @@ export const requestLanguageChange = async (req, res) => {
 
 
         // Determine delivery method based on target language
-        const useSMS = shouldUseSMS(targetLanguage);
+        const useSMS = requiresSMS(targetLanguage);
 
         if (useSMS) {
-            // SMS languages: es, hi, pt, zh, en
-            // Check if phone number is provided or already exists
-            let phoneToUse = user.phoneNumber;
-
-            if (phoneNumber) {
-                // Validate and save new phone number
-                if (!isValidPhoneNumber(phoneNumber)) {
-                    return res.status(400).json({
-                        success: false,
-                        message: "Please enter a valid 10-digit Indian phone number (starting with 6-9)",
-                    });
-                }
-                phoneToUse = phoneNumber;
-                user.phoneNumber = phoneNumber;
-                await user.save();
-                console.log(`📱 Phone number saved for user: ${phoneNumber}`);
-            } else if (!phoneToUse) {
-                // No phone number provided and none on file
+            // SMS languages: en, hi, es, pt, zh
+            // Validate and save phone number
+            if (!phoneNumber) {
                 return res.status(400).json({
                     success: false,
                     message: "Phone number required for this language",
@@ -92,26 +86,33 @@ export const requestLanguageChange = async (req, res) => {
                 });
             }
 
-            // Create OTP for SMS channel
-            const { otp } = await createLanguageOTP(userId, "mobile", targetLanguage);
-
-            // Send OTP via SMS using 2Factor.in
-            const smsResult = await sendLanguageSMS(phoneToUse, otp, targetLanguage);
-
-            if (!smsResult.success) {
-                return res.status(500).json({
+            // Validate phone number format
+            const cleanedPhone = sanitizePhoneNumber(phoneNumber);
+            if (!isValidIndianPhoneNumber(cleanedPhone)) {
+                return res.status(400).json({
                     success: false,
-                    message: smsResult.message || "Failed to send SMS. Please try again.",
+                    message: "Please enter a valid 10-digit Indian phone number (starting with 6-9)",
                 });
             }
 
-            console.log(`📱 OTP sent via SMS to ${phoneToUse} for language: ${targetLanguage}`);
+            // Save phone number to user document
+            user.phoneNumber = cleanedPhone;
+            await user.save();
+            console.log(`📱 Phone number saved for user: ${cleanedPhone}`);
+
+            // Create OTP for SMS channel (4-digit)
+            const { otp } = await createLanguageOTP(userId, "mobile", targetLanguage);
+
+            // Send OTP via SMS using 2Factor.in
+            await sendMobileOTP(cleanedPhone, otp, targetLanguage);
+
+            console.log(`📱 SMS OTP sent to ${cleanedPhone} for language: ${targetLanguage}`);
 
             return res.status(200).json({
                 success: true,
-                message: `OTP sent to your phone ending in ${phoneToUse.slice(-4)}`,
+                message: `OTP sent to your phone ending in ****${cleanedPhone.slice(-3)}`,
                 requiresOTP: true,
-                channel: "sms",
+                channel: "mobile",
             });
         } else {
             // Email language: fr (French)
@@ -122,13 +123,13 @@ export const requestLanguageChange = async (req, res) => {
                 });
             }
 
-            // Create OTP for email channel
+            // Create OTP for email channel (4-digit)
             const { otp } = await createLanguageOTP(userId, "email", targetLanguage);
 
             // Send OTP via email
             await sendLanguageOTP(user.email, otp, targetLanguage);
 
-            console.log(`📧 OTP sent via email to ${user.email} for language: ${targetLanguage}`);
+            console.log(`📧 Email OTP sent to ${user.email} for language: ${targetLanguage}`);
 
             return res.status(200).json({
                 success: true,

@@ -4,7 +4,7 @@ import axios from "../lib/axiosinstance";
 
 interface LanguageOTPModalProps {
     targetLanguage: string;
-    channel: "email" | "sms";
+    channel: "email" | "mobile";
     onClose: () => void;
     onVerified: () => void;
 }
@@ -16,7 +16,7 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
     onVerified,
 }) => {
     const { t } = useTranslation();
-    const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
+    const [otp, setOtp] = useState<string[]>(["", "", "", ""]); // 4-digit OTP
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
@@ -25,6 +25,7 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
     const languageNames: Record<string, string> = {
+        en: t("language.english"),
         hi: t("language.hindi"),
         es: t("language.spanish"),
         pt: t("language.portuguese"),
@@ -64,7 +65,7 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
         setError(""); // Clear error on input
 
         // Auto-advance to next input
-        if (value && index < 5) {
+        if (value && index < 3) { // Changed from 5 to 3
             inputRefs.current[index + 1]?.focus();
         }
     };
@@ -78,21 +79,21 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
         if (e.key === "v" && (e.ctrlKey || e.metaKey)) {
             e.preventDefault();
             navigator.clipboard.readText().then((text) => {
-                const digits = text.replace(/\D/g, "").slice(0, 6).split("");
+                const digits = text.replace(/\D/g, "").slice(0, 4).split(""); // Changed from 6 to 4
                 const newOtp = [...otp];
                 digits.forEach((digit, i) => {
-                    if (i < 6) newOtp[i] = digit;
+                    if (i < 4) newOtp[i] = digit; // Changed from 6 to 4
                 });
                 setOtp(newOtp);
-                inputRefs.current[Math.min(digits.length, 5)]?.focus();
+                inputRefs.current[Math.min(digits.length, 3)]?.focus(); // Changed from 5 to 3
             });
         }
     };
 
     const handleVerify = async () => {
         const otpString = otp.join("");
-        if (otpString.length !== 6) {
-            setError("Please enter all 6 digits");
+        if (otpString.length !== 4) { // Changed from 6 to 4
+            setError("Please enter all 4 digits"); // Changed from 6 to 4
             setShake(true);
             setTimeout(() => setShake(false), 500);
             return;
@@ -123,7 +124,7 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
             setError(err.response?.data?.message || "Invalid OTP. Please try again.");
             setShake(true);
             setTimeout(() => setShake(false), 500);
-            setOtp(["", "", "", "", "", ""]);
+            setOtp(["", "", "", ""]); // Changed from 6 to 4
             inputRefs.current[0]?.focus();
         } finally {
             setLoading(false);
@@ -133,7 +134,7 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
     const handleResend = async () => {
         setLoading(true);
         setError("");
-        setOtp(["", "", "", "", "", ""]);
+        setOtp(["", "", "", ""]); // Changed from 6 to 4
 
         try {
             const token = localStorage.getItem("token");
@@ -205,7 +206,7 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
                             </span>
                             <div>
                                 <p className="text-sm font-medium text-blue-900">
-                                    We've sent a 6-digit OTP to your registered {channel === "email" ? "email address" : "phone number"}
+                                    We've sent a 4-digit OTP to your {channel === "email" ? "email address" : "phone number"}
                                 </p>
                                 <p className="text-xs text-blue-700 mt-1">
                                     Please enter the code below to continue

@@ -8,10 +8,11 @@ import OTP from "../models/otp.js";
  */
 
 /**
- * Generate a 6-digit random OTP
+ * Generate a 4-digit random OTP (for 2Factor.in compatibility)
+ * 2Factor templates only support XXXX format
  */
 export const generateOTP = () => {
-    return crypto.randomInt(100000, 999999).toString();
+    return crypto.randomInt(1000, 9999).toString();
 };
 
 /**
