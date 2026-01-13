@@ -51,10 +51,12 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
             };
         }
 
-        // Real mode - send SMS via 2Factor API
-        const apiUrl = `https://2factor.in/API/V1/${apiKey}/SMS/${cleanPhone}/${otp}`;
+        // Real mode - send SMS via 2Factor API (SMS ONLY - no voice fallback)
+        // Adding SMS_ONLY parameter to prevent automatic voice call fallback
+        const apiUrl = `https://2factor.in/API/V1/${apiKey}/SMS/${cleanPhone}/${otp}/SMS_ONLY`;
 
-        console.log(`📱 Sending SMS OTP to +91${cleanPhone} for ${targetLanguage} language change...`);
+        console.log(`📱 Sending SMS-ONLY OTP to +91${cleanPhone} for ${targetLanguage} language change...`);
+        console.log(`   Mode: SMS ONLY (voice calls disabled)`);
 
         const response = await axios.get(apiUrl, {
             timeout: 10000, // 10 second timeout
