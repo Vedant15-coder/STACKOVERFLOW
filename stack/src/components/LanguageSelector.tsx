@@ -15,7 +15,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
     const [phoneNumber, setPhoneNumber] = useState("");
     const [phoneError, setPhoneError] = useState("");
     const [pendingLanguage, setPendingLanguage] = useState<string>(""); // Language waiting for OTP
-    const [otpChannel, setOtpChannel] = useState<"email" | "sms">("email");
+    const [otpChannel, setOtpChannel] = useState<"email" | "mobile">("email");
     const [isProcessing, setIsProcessing] = useState(false);
     const [hasMounted, setHasMounted] = useState(false);
 
