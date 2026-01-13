@@ -72,7 +72,9 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
         console.log(`   Language: ${targetLanguage}`);
         console.log(`   Sender: DEVQRY`);
         console.log(`   Template: DEVQUERY`);
+        console.log(`   OTP: ${otp}`);
         console.log(`   Mode: SMS ONLY (NO voice calls possible)`);
+        console.log(`   📦 Payload:`, JSON.stringify(payload, null, 2));
 
         const response = await axios.post(apiUrl, payload, {
             headers: {
@@ -80,6 +82,8 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
             },
             timeout: 10000, // 10 second timeout
         });
+
+        console.log(`   📨 2Factor Response:`, JSON.stringify(response.data, null, 2));
 
         // Check response status
         if (response.data && response.data.Status === 'Success') {
