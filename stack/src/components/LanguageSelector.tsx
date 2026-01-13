@@ -375,6 +375,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
                             )}
                         </div>
 
+                        {/* Invisible reCAPTCHA container for Firebase */}
+                        <div id="recaptcha-container"></div>
+
                         <div className="flex gap-3">
                             <button
                                 onClick={() => {
