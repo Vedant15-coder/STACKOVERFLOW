@@ -8,12 +8,25 @@ import OTP from "../models/otp.js";
  */
 
 /**
- * Generate a 4-digit random OTP (for 2Factor.in compatibility)
+ * Generate a 4-digit random OTP for language change (2Factor.in compatibility)
  * 2Factor templates only support XXXX format
  */
-export const generateOTP = () => {
+export const generateLanguageOTP = () => {
     return crypto.randomInt(1000, 9999).toString();
 };
+
+/**
+ * Generate a 6-digit random OTP for login verification
+ */
+export const generateLoginOTP = () => {
+    return crypto.randomInt(100000, 999999).toString();
+};
+
+/**
+ * @deprecated Use generateLanguageOTP() or generateLoginOTP() instead
+ * This function is kept for backward compatibility
+ */
+export const generateOTP = generateLoginOTP;
 
 /**
  * Hash OTP using bcrypt before storage
@@ -32,8 +45,8 @@ export const hashOTP = async (otp) => {
  */
 export const createLanguageOTP = async (userId, channel, targetLanguage) => {
     try {
-        // Generate OTP
-        const otp = generateOTP();
+        // Generate 4-digit OTP for language change
+        const otp = generateLanguageOTP();
         const otpHash = await hashOTP(otp);
 
         // Set expiry to 5 minutes from now
@@ -154,8 +167,8 @@ export const canRequestOTP = async (userId) => {
  */
 export const createLoginOTP = async (userId, channel = "email") => {
     try {
-        // Generate OTP
-        const otp = generateOTP();
+        // Generate 6-digit OTP for login
+        const otp = generateLoginOTP();
         const otpHash = await hashOTP(otp);
 
         // Set expiry to 5 minutes from now
