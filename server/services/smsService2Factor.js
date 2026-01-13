@@ -1,23 +1,20 @@
 import axios from 'axios';
 
 /**
- * 2Factor.in Transactional SMS (TSMS) Service
+ * 2Factor.in SMS Service with Template Support
  * 
- * CRITICAL: This uses TSMS endpoint which sends SMS ONLY
- * - NO voice call support
- * - NO automatic fallback to calls
- * - NO session IDs
- * - Transactional SMS only
+ * Using SMS endpoint with template name for DLT compliance
+ * This approach uses the standard SMS API with template parameter
  * 
  * API Documentation: https://2factor.in/docs/
  */
 
 /**
- * Send SMS OTP using 2Factor.in TSMS API (SMS ONLY - NO VOICE CALLS)
+ * Send SMS OTP using 2Factor.in SMS API with Template
  * @param {string} phoneNumber - 10-digit Indian mobile number
  * @param {string} otp - 4-digit OTP code
  * @param {string} targetLanguage - Target language code (for logging)
- * @returns {Promise<{success: boolean, message?: string}>}
+ * @returns {Promise<{success: boolean, message?: string, sessionId?: string}>}
  */
 export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown') => {
     try {
@@ -44,42 +41,30 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
         // Mock mode - log OTP without sending
         if (smsMode === 'mock') {
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            console.log('📱 [MOCK MODE] 2Factor TSMS (SMS ONLY)');
+            console.log('📱 [MOCK MODE] 2Factor SMS with Template');
             console.log(`Phone: +91${cleanPhone}`);
             console.log(`Language: ${targetLanguage}`);
             console.log(`🔐 OTP: ${otp}`);
-            console.log(`Sender: DEVQRY`);
             console.log(`Template: DEVQUERY`);
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             return {
                 success: true,
                 message: 'Mock SMS sent (check console)',
+                sessionId: 'mock-session-' + Date.now(),
             };
         }
 
-        // Real mode - send Transactional SMS via 2Factor TSMS API
-        // This endpoint does NOT support voice calls
-        const apiUrl = `https://2factor.in/API/V1/${apiKey}/ADDON_SERVICES/SEND/TSMS`;
+        // Real mode - Send SMS with template name
+        // Format: /API/V1/{API_KEY}/SMS/{phone}/{otp}/{template_name}
+        const apiUrl = `https://2factor.in/API/V1/${apiKey}/SMS/${cleanPhone}/${otp}/DEVQUERY`;
 
-        const payload = {
-            From: 'DEVQRY',           // Approved Sender ID (6 characters)
-            To: `91${cleanPhone}`,    // Indian number (NO + sign)
-            TemplateName: 'DEVQUERY', // Approved template name in 2Factor dashboard
-            VAR1: otp,                // 4-digit OTP for #VAR1# placeholder
-        };
-
-        console.log(`📱 Sending Transactional SMS (TSMS) to +91${cleanPhone}...`);
+        console.log(`📱 Sending SMS with Template to +91${cleanPhone}...`);
         console.log(`   Language: ${targetLanguage}`);
-        console.log(`   Sender: DEVQRY`);
         console.log(`   Template: DEVQUERY`);
         console.log(`   OTP: ${otp}`);
-        console.log(`   Mode: SMS ONLY (NO voice calls possible)`);
-        console.log(`   📦 Payload:`, JSON.stringify(payload, null, 2));
+        console.log(`   Endpoint: /SMS/{phone}/{otp}/DEVQUERY`);
 
-        const response = await axios.post(apiUrl, payload, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        const response = await axios.get(apiUrl, {
             timeout: 10000, // 10 second timeout
         });
 
@@ -87,23 +72,23 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
 
         // Check response status
         if (response.data && response.data.Status === 'Success') {
-            console.log(`✅ Transactional SMS sent successfully (NO voice call)`);
+            console.log(`✅ SMS sent successfully with template`);
             console.log(`   Phone: +91${cleanPhone}`);
             console.log(`   Language: ${targetLanguage}`);
-            console.log(`   OTP: ${otp}`);
-            console.log(`   ⚠️ NO session ID (TSMS does not create sessions)`);
+            console.log(`   Session ID: ${response.data.Details}`);
 
             return {
                 success: true,
                 message: 'OTP sent successfully via SMS',
+                sessionId: response.data.Details,
             };
         } else {
-            console.error('❌ 2Factor TSMS API returned error:', response.data);
-            throw new Error(response.data.Details || 'Failed to send Transactional SMS');
+            console.error('❌ 2Factor API returned error:', response.data);
+            throw new Error(response.data.Details || 'Failed to send SMS');
         }
 
     } catch (error) {
-        console.error('❌ Error sending Transactional SMS via 2Factor:', error.message);
+        console.error('❌ Error sending SMS via 2Factor:', error.message);
 
         // Handle specific error cases
         if (error.response) {
@@ -112,7 +97,7 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
             throw new Error(error.response.data.Details || 'Failed to send SMS OTP');
         } else if (error.request) {
             // Request was made but no response received
-            console.error('   No response from 2Factor TSMS API');
+            console.error('   No response from 2Factor API');
             throw new Error('SMS service unavailable. Please try again later.');
         } else {
             // Error in request setup
@@ -125,15 +110,10 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
  * Approved SMS Template (Configured in 2Factor Dashboard)
  * 
  * Template Name: DEVQUERY
- * Sender ID: DEVQRY
+ * Sender ID: DEVQRY (configured in 2Factor dashboard)
  * Template Text: Your DevQuery OTP is #VAR1#. Do not share this OTP.
  * 
- * Variables:
- * - #VAR1# = 4-digit OTP code
- * 
- * IMPORTANT:
- * - This template must be pre-approved in 2Factor dashboard
- * - Sender ID must be registered and approved
- * - TSMS endpoint does NOT support voice calls
- * - NO automatic fallback to voice
+ * API Format: /SMS/{phone}/{otp}/DEVQUERY
+ * The template name is passed as the last parameter in the URL
+ * 2Factor automatically replaces #VAR1# with the OTP value
  */
