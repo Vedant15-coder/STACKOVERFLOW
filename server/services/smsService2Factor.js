@@ -1,18 +1,23 @@
 import axios from 'axios';
 
 /**
- * 2Factor.in SMS OTP Service
- * Sends SMS OTP for language change verification
+ * 2Factor.in Transactional SMS (TSMS) Service
+ * 
+ * CRITICAL: This uses TSMS endpoint which sends SMS ONLY
+ * - NO voice call support
+ * - NO automatic fallback to calls
+ * - NO session IDs
+ * - Transactional SMS only
  * 
  * API Documentation: https://2factor.in/docs/
  */
 
 /**
- * Send SMS OTP using 2Factor.in API
+ * Send SMS OTP using 2Factor.in TSMS API (SMS ONLY - NO VOICE CALLS)
  * @param {string} phoneNumber - 10-digit Indian mobile number
  * @param {string} otp - 4-digit OTP code
  * @param {string} targetLanguage - Target language code (for logging)
- * @returns {Promise<{success: boolean, message?: string, sessionId?: string}>}
+ * @returns {Promise<{success: boolean, message?: string}>}
  */
 export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown') => {
     try {
@@ -39,48 +44,62 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
         // Mock mode - log OTP without sending
         if (smsMode === 'mock') {
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            console.log('📱 [MOCK MODE] 2Factor SMS OTP');
+            console.log('📱 [MOCK MODE] 2Factor TSMS (SMS ONLY)');
             console.log(`Phone: +91${cleanPhone}`);
             console.log(`Language: ${targetLanguage}`);
             console.log(`🔐 OTP: ${otp}`);
+            console.log(`Sender: DEVQRY`);
+            console.log(`Template: DEVQUERY`);
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             return {
                 success: true,
                 message: 'Mock SMS sent (check console)',
-                sessionId: 'mock-session-' + Date.now(),
             };
         }
 
-        // Real mode - send SMS via 2Factor API (SMS ONLY - no voice fallback)
-        // Adding SMS_ONLY parameter to prevent automatic voice call fallback
-        const apiUrl = `https://2factor.in/API/V1/${apiKey}/SMS/${cleanPhone}/${otp}/SMS_ONLY`;
+        // Real mode - send Transactional SMS via 2Factor TSMS API
+        // This endpoint does NOT support voice calls
+        const apiUrl = `https://2factor.in/API/V1/${apiKey}/ADDON_SERVICES/SEND/TSMS`;
 
-        console.log(`📱 Sending SMS-ONLY OTP to +91${cleanPhone} for ${targetLanguage} language change...`);
-        console.log(`   Mode: SMS ONLY (voice calls disabled)`);
+        const payload = {
+            From: 'DEVQRY',           // Approved Sender ID (6 characters)
+            To: `91${cleanPhone}`,    // Indian number (NO + sign)
+            TemplateName: 'DEVQUERY', // Approved template name in 2Factor dashboard
+            VAR1: otp,                // 4-digit OTP for #VAR1# placeholder
+        };
 
-        const response = await axios.get(apiUrl, {
+        console.log(`📱 Sending Transactional SMS (TSMS) to +91${cleanPhone}...`);
+        console.log(`   Language: ${targetLanguage}`);
+        console.log(`   Sender: DEVQRY`);
+        console.log(`   Template: DEVQUERY`);
+        console.log(`   Mode: SMS ONLY (NO voice calls possible)`);
+
+        const response = await axios.post(apiUrl, payload, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
             timeout: 10000, // 10 second timeout
         });
 
         // Check response status
         if (response.data && response.data.Status === 'Success') {
-            console.log(`✅ SMS OTP sent successfully via 2Factor`);
-            console.log(`   Session ID: ${response.data.Details}`);
+            console.log(`✅ Transactional SMS sent successfully (NO voice call)`);
             console.log(`   Phone: +91${cleanPhone}`);
             console.log(`   Language: ${targetLanguage}`);
+            console.log(`   OTP: ${otp}`);
+            console.log(`   ⚠️ NO session ID (TSMS does not create sessions)`);
 
             return {
                 success: true,
                 message: 'OTP sent successfully via SMS',
-                sessionId: response.data.Details,
             };
         } else {
-            console.error('❌ 2Factor API returned error:', response.data);
-            throw new Error(response.data.Details || 'Failed to send SMS');
+            console.error('❌ 2Factor TSMS API returned error:', response.data);
+            throw new Error(response.data.Details || 'Failed to send Transactional SMS');
         }
 
     } catch (error) {
-        console.error('❌ Error sending SMS OTP via 2Factor:', error.message);
+        console.error('❌ Error sending Transactional SMS via 2Factor:', error.message);
 
         // Handle specific error cases
         if (error.response) {
@@ -89,7 +108,7 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
             throw new Error(error.response.data.Details || 'Failed to send SMS OTP');
         } else if (error.request) {
             // Request was made but no response received
-            console.error('   No response from 2Factor API');
+            console.error('   No response from 2Factor TSMS API');
             throw new Error('SMS service unavailable. Please try again later.');
         } else {
             // Error in request setup
@@ -99,10 +118,18 @@ export const sendMobileOTP = async (phoneNumber, otp, targetLanguage = 'unknown'
 };
 
 /**
- * OTP Template (Pre-approved by 2Factor.in)
+ * Approved SMS Template (Configured in 2Factor Dashboard)
  * 
- * Template: XXXX is your OTP for language change on DevQuery. Do not share this OTP.
+ * Template Name: DEVQUERY
+ * Sender ID: DEVQRY
+ * Template Text: Your DevQuery OTP is #VAR1#. Do not share this OTP.
  * 
- * Note: This template is configured in 2Factor dashboard
- * The API automatically uses the approved template with XXXX placeholder
+ * Variables:
+ * - #VAR1# = 4-digit OTP code
+ * 
+ * IMPORTANT:
+ * - This template must be pre-approved in 2Factor dashboard
+ * - Sender ID must be registered and approved
+ * - TSMS endpoint does NOT support voice calls
+ * - NO automatic fallback to voice
  */
