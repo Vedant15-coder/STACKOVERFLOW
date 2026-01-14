@@ -204,14 +204,22 @@ export const sendLoginOTP = async (email, otp, browser = 'Chrome', os = 'Unknown
 
         initializeSendGrid();
 
+        // Use verified sender email explicitly
+        const fromEmail = process.env.EMAIL_FROM || 'kondvilkarvedant@gmail.com';
+
         const msg = {
             to: email,
-            from: process.env.EMAIL_FROM || 'DevQuery <no-reply@devquery.com>',
+            from: {
+                email: fromEmail,
+                name: 'DevQuery'
+            },
+            replyTo: fromEmail,
             subject: 'DevQuery Login Verification',
+            text: `Your DevQuery login verification code is: ${otp}. Valid for 5 minutes. Login detected from ${browser} on ${os}.`,
             html: `<html><body>
         <h2>Login Verification</h2>
         <p>A login attempt was detected from <strong>${browser}</strong> on <strong>${os}</strong>.</p>
-        <div style="background:#fff;padding:20px;margin:20px 0;border:2px solid #0066cc;border-radius:8px;text-align:center;">
+        <div style="background:#f5f5f5;padding:20px;margin:20px 0;border:2px solid #0066cc;border-radius:8px;text-align:center;">
           <p>Your verification code is:</p>
           <h1 style="font-size:32px;color:#0066cc;letter-spacing:8px;">${otp}</h1>
           <p style="color:#666;font-size:14px;">Valid for 5 minutes</p>
@@ -224,13 +232,34 @@ export const sendLoginOTP = async (email, otp, browser = 'Chrome', os = 'Unknown
         </ul>
         <p>— The DevQuery Team</p>
       </body></html>`,
+            mailSettings: {
+                sandboxMode: {
+                    enable: false
+                }
+            },
+            trackingSettings: {
+                clickTracking: {
+                    enable: false
+                },
+                openTracking: {
+                    enable: false
+                }
+            }
         };
 
-        await sgMail.send(msg);
+        console.log(`📧 Sending login OTP email to ${email} from ${fromEmail}...`);
+        const response = await sgMail.send(msg);
+        console.log(`✅ SendGrid response:`, response[0].statusCode, response[0].headers);
         console.log(`✅ Login OTP email sent to ${email}`);
         return { success: true };
     } catch (error) {
-        console.error('Error sending login OTP email:', error.response?.body || error);
+        console.error('❌ Error sending login OTP email:');
+        console.error('Error code:', error.code);
+        console.error('Error message:', error.message);
+        if (error.response) {
+            console.error('Response status:', error.response.statusCode);
+            console.error('Response body:', JSON.stringify(error.response.body, null, 2));
+        }
         return { success: false, message: 'Failed to send OTP email. Please try again later.' };
     }
 };
