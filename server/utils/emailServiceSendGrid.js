@@ -169,7 +169,7 @@ export const sendLanguageOTP = async (email, otp, targetLanguage) => {
             }
         };
 
-        console.log(`📧 Sending language OTP email to ${email} from ${fromEmail}...`);
+        console.log(`📧 Sending language OTP email to ${email}...`);
         const response = await sgMail.send(msg);
         console.log(`✅ SendGrid response:`, response[0].statusCode, response[0].headers);
         console.log(`✅ Language OTP email sent to ${email}`);
@@ -247,7 +247,7 @@ export const sendLoginOTP = async (email, otp, browser = 'Chrome', os = 'Unknown
             }
         };
 
-        console.log(`📧 Sending login OTP email to ${email} from ${fromEmail}...`);
+        console.log(`📧 Sending login OTP email to ${email}...`);
         const response = await sgMail.send(msg);
         console.log(`✅ SendGrid response:`, response[0].statusCode, response[0].headers);
         console.log(`✅ Login OTP email sent to ${email}`);
