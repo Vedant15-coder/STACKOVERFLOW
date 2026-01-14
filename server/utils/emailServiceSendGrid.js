@@ -131,11 +131,7 @@ export const sendLanguageOTP = async (email, otp, targetLanguage) => {
 
         const msg = {
             to: email,
-            from: {
-                email: fromEmail,
-                name: 'DevQuery'
-            },
-            replyTo: fromEmail,
+            from: process.env.EMAIL_FROM || 'kondvilkarvedant@gmail.com',
             subject: 'DevQuery Language Change Verification',
             text: `Your DevQuery language change verification code is: ${otp}. Valid for 5 minutes.`,
             html: `<html><body>
@@ -209,11 +205,7 @@ export const sendLoginOTP = async (email, otp, browser = 'Chrome', os = 'Unknown
 
         const msg = {
             to: email,
-            from: {
-                email: fromEmail,
-                name: 'DevQuery'
-            },
-            replyTo: fromEmail,
+            from: process.env.EMAIL_FROM || 'kondvilkarvedant@gmail.com',
             subject: 'DevQuery Login Verification',
             text: `Your DevQuery login verification code is: ${otp}. Valid for 5 minutes. Login detected from ${browser} on ${os}.`,
             html: `<html><body>
