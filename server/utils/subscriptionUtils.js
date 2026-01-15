@@ -48,27 +48,27 @@ export const SUBSCRIPTION_PLANS = {
 
 /**
  * Check if payment is allowed based on IST time window
- * CRITICAL: Payments only allowed between 10:00 AM - 11:00 AM IST
+ * UPDATED: Payments allowed 24/7 for demo/production use
  * 
- * @returns {boolean} True if current time is within payment window
+ * @returns {boolean} True (always allowed)
  */
 export const isPaymentAllowedIST = () => {
+    // Allow payments anytime
+    return true;
+
+    /* ORIGINAL TIME RESTRICTION (10-11 AM IST):
     try {
-        // Get current time in IST
         const now = new Date();
         const istTime = new Date(
             now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
         );
-
         const hour = istTime.getHours();
-
-        // Payment allowed only between 10:00 AM (inclusive) and 11:00 AM (exclusive)
         return hour >= 10 && hour < 11;
     } catch (error) {
         console.error("Error checking IST time:", error);
-        // Fail secure: if we can't determine time, block payment
         return false;
     }
+    */
 };
 
 /**
