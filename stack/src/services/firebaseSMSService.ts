@@ -36,37 +36,55 @@ export const initializeRecaptcha = async (authInstance: Auth): Promise<Recaptcha
     if ((window as any).recaptchaVerifier) {
         try {
             (window as any).recaptchaVerifier.clear();
+            console.log("🧹 Cleared existing reCAPTCHA verifier");
         } catch (error) {
             console.warn("Error clearing existing reCAPTCHA:", error);
         }
+        (window as any).recaptchaVerifier = null;
     }
 
-    // Ensure the container exists
+    // Ensure the container exists and is visible
     const container = document.getElementById("recaptcha-container");
     if (!container) {
         console.error("❌ recaptcha-container element not found in DOM");
         throw new Error("reCAPTCHA container not found. Please refresh the page and try again.");
     }
 
-    console.log("✅ reCAPTCHA script loaded, initializing verifier...");
+    // Make sure container is visible (required for reCAPTCHA to work)
+    container.style.display = 'block';
+    container.style.visibility = 'visible';
 
-    // Create new invisible reCAPTCHA verifier
-    const recaptchaVerifier = new RecaptchaVerifier(
-        authInstance,
-        "recaptcha-container",
-        {
-            size: "invisible",
-            callback: () => {
-                console.log("✅ reCAPTCHA verified");
-            },
-            "expired-callback": () => {
-                console.warn("⚠️ reCAPTCHA expired");
-            },
-        }
-    );
+    console.log("✅ reCAPTCHA script loaded, container ready, initializing verifier...");
 
-    (window as any).recaptchaVerifier = recaptchaVerifier;
-    return recaptchaVerifier;
+    try {
+        // Create new invisible reCAPTCHA verifier with explicit render
+        const recaptchaVerifier = new RecaptchaVerifier(
+            authInstance,
+            "recaptcha-container",
+            {
+                size: "invisible",
+                callback: (response: any) => {
+                    console.log("✅ reCAPTCHA verified successfully");
+                },
+                "expired-callback": () => {
+                    console.warn("⚠️ reCAPTCHA expired, please try again");
+                },
+                "error-callback": (error: any) => {
+                    console.error("❌ reCAPTCHA error:", error);
+                }
+            }
+        );
+
+        // Explicitly render the reCAPTCHA
+        await recaptchaVerifier.render();
+        console.log("✅ reCAPTCHA rendered successfully");
+
+        (window as any).recaptchaVerifier = recaptchaVerifier;
+        return recaptchaVerifier;
+    } catch (error) {
+        console.error("❌ Failed to initialize reCAPTCHA:", error);
+        throw new Error("Failed to initialize reCAPTCHA. Please refresh and try again.");
+    }
 };
 
 /**
