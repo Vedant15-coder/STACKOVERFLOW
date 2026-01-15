@@ -18,10 +18,17 @@ import { auth } from "../config/firebase.config";
  * @param authInstance - Firebase Auth instance
  * @returns RecaptchaVerifier instance
  */
-export const initializeRecaptcha = (authInstance: Auth): RecaptchaVerifier => {
+export const initializeRecaptcha = async (authInstance: Auth): Promise<RecaptchaVerifier> => {
+    // Wait for reCAPTCHA script to load
+    let attempts = 0;
+    while (typeof window !== 'undefined' && !(window as any).grecaptcha && attempts < 50) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        attempts++;
+    }
+
     // Verify reCAPTCHA script is loaded
     if (typeof window !== 'undefined' && !(window as any).grecaptcha) {
-        console.warn("⚠️ reCAPTCHA script not loaded yet. It should be loaded in _document.tsx");
+        console.error("⚠️ reCAPTCHA script not loaded after 5 seconds");
         throw new Error("reCAPTCHA script not loaded. Please refresh the page and try again.");
     }
 
@@ -40,6 +47,8 @@ export const initializeRecaptcha = (authInstance: Auth): RecaptchaVerifier => {
         console.error("❌ recaptcha-container element not found in DOM");
         throw new Error("reCAPTCHA container not found. Please refresh the page and try again.");
     }
+
+    console.log("✅ reCAPTCHA script loaded, initializing verifier...");
 
     // Create new invisible reCAPTCHA verifier
     const recaptchaVerifier = new RecaptchaVerifier(
@@ -91,7 +100,7 @@ export const sendSMSOTP = async (
         await new Promise(resolve => setTimeout(resolve, 100));
 
         // Create fresh reCAPTCHA verifier
-        const recaptchaVerifier = initializeRecaptcha(auth);
+        const recaptchaVerifier = await initializeRecaptcha(auth);
 
         // Send SMS OTP via Firebase
         const confirmationResult = await signInWithPhoneNumber(
