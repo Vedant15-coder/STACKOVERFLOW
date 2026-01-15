@@ -372,9 +372,6 @@ const LanguageOTPModal: React.FC<LanguageOTPModalProps> = ({
                 </div>
             </div>
 
-            {/* reCAPTCHA container for Firebase Phone Authentication */}
-            <div id="recaptcha-container"></div>
-
             <style jsx>{`
                 @keyframes fadeIn {
                     from { opacity: 0; }
