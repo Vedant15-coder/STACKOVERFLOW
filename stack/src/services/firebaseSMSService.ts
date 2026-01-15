@@ -19,6 +19,12 @@ import { auth } from "../config/firebase.config";
  * @returns RecaptchaVerifier instance
  */
 export const initializeRecaptcha = (authInstance: Auth): RecaptchaVerifier => {
+    // Verify reCAPTCHA script is loaded
+    if (typeof window !== 'undefined' && !(window as any).grecaptcha) {
+        console.warn("⚠️ reCAPTCHA script not loaded yet. It should be loaded in _document.tsx");
+        throw new Error("reCAPTCHA script not loaded. Please refresh the page and try again.");
+    }
+
     // Clean up existing verifier if any
     if ((window as any).recaptchaVerifier) {
         try {
@@ -26,6 +32,13 @@ export const initializeRecaptcha = (authInstance: Auth): RecaptchaVerifier => {
         } catch (error) {
             console.warn("Error clearing existing reCAPTCHA:", error);
         }
+    }
+
+    // Ensure the container exists
+    const container = document.getElementById("recaptcha-container");
+    if (!container) {
+        console.error("❌ recaptcha-container element not found in DOM");
+        throw new Error("reCAPTCHA container not found. Please refresh the page and try again.");
     }
 
     // Create new invisible reCAPTCHA verifier
