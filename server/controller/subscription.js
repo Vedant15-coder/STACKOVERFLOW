@@ -1,23 +1,19 @@
 /**
- * Subscription Controller (MOCK RAZORPAY VERSION)
+ * Subscription Controller (REAL RAZORPAY VERSION)
  * 
- * Handles all subscription and payment operations using MOCK Razorpay
- * NO REAL API KEYS, PAN, OR DASHBOARD REQUIRED
- * 
- * Perfect for:
- * - Student/internship projects
- * - Demonstrations
- * - Development/testing
+ * Handles all subscription and payment operations using REAL Razorpay
+ * LIVE PAYMENTS with real API keys
  * 
  * Features:
  * - Payment order creation (with IST time validation)
- * - Payment verification (mock signature validation)
+ * - Payment verification (real signature validation)
  * - Subscription status retrieval
+ * - Webhook handling
  * 
  * SECURITY:
  * - All endpoints are JWT protected
  * - Payment time window enforced (10-11 AM IST)
- * - Mock signature verification (same logic as real Razorpay)
+ * - Real Razorpay signature verification
  * - Backend-only enforcement
  */
 
@@ -34,23 +30,10 @@ import {
 } from "../utils/subscriptionUtils.js";
 import { sendInvoiceEmail } from "../utils/emailServiceSendGrid.js";
 import {
-    getMockRazorpayInstance,
-    verifyMockSignature,
-} from "../utils/mockRazorpay.js";
-
-// Initialize Mock Razorpay instance
-let razorpayInstance = null;
-
-const getRazorpayInstance = () => {
-    if (!razorpayInstance) {
-        razorpayInstance = getMockRazorpayInstance();
-        console.log("🎭 Using MOCK Razorpay (No real API keys needed)");
-    }
-    return razorpayInstance;
-};
-
-// Mock secret key for signature verification
-const MOCK_SECRET_KEY = process.env.RAZORPAY_KEY_SECRET || "mock_secret_key_for_testing";
+    getRazorpayInstance,
+    verifyPaymentSignature,
+    isLiveMode,
+} from "../utils/razorpayService.js";
 
 /**
  * Create payment order
@@ -141,17 +124,19 @@ export const createPaymentOrder = async (req, res) => {
 
         await payment.save();
 
-        console.log(`🎭 Mock order created: ${order.id} for ${plan} plan`);
+        const mode = isLiveMode() ? "LIVE" : "TEST";
+        console.log(`💳 ${mode} Razorpay order created: ${order.id} for ${plan} plan`);
 
         // Return order details to frontend
         res.status(200).json({
             success: true,
-            mockMode: true,
+            liveMode: isLiveMode(),
             order: {
                 id: order.id,
                 amount: order.amount,
                 currency: order.currency,
             },
+            keyId: process.env.RAZORPAY_KEY_ID, // Frontend needs this
             plan: planDetails,
             invoiceId: invoiceId,
         });
@@ -199,12 +184,11 @@ export const verifyPayment = async (req, res) => {
             });
         }
 
-        // Verify Mock Razorpay signature (CRITICAL SECURITY CHECK)
-        const isValidSignature = verifyMockSignature(
+        // Verify Razorpay signature (CRITICAL SECURITY CHECK)
+        const isValidSignature = verifyPaymentSignature(
             razorpay_order_id,
             razorpay_payment_id,
-            razorpay_signature,
-            MOCK_SECRET_KEY
+            razorpay_signature
         );
 
         if (!isValidSignature) {
@@ -212,7 +196,7 @@ export const verifyPayment = async (req, res) => {
             payment.status = "FAILED";
             await payment.save();
 
-            console.log(`❌ Mock payment verification failed: Invalid signature`);
+            console.log(`❌ Payment verification failed: Invalid signature`);
 
             return res.status(400).json({
                 success: false,
@@ -221,7 +205,8 @@ export const verifyPayment = async (req, res) => {
         }
 
         // Signature verified - payment is legitimate
-        console.log(`✅ Mock payment verified: ${razorpay_payment_id}`);
+        const mode = isLiveMode() ? "LIVE" : "TEST";
+        console.log(`✅ ${mode} payment verified: ${razorpay_payment_id}`);
 
         // Update payment record
         payment.razorpayPaymentId = razorpay_payment_id;
@@ -261,7 +246,7 @@ export const verifyPayment = async (req, res) => {
         // Return success response
         res.status(200).json({
             success: true,
-            mockMode: true,
+            liveMode: isLiveMode(),
             message: `Subscription activated successfully! You are now on ${payment.plan} plan.`,
             subscription: {
                 plan: payment.plan,
@@ -318,7 +303,7 @@ export const getSubscriptionStatus = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            mockMode: true,
+            liveMode: isLiveMode(),
             subscription: {
                 plan: isExpired ? "FREE" : plan,
                 expiresAt: isExpired ? null : expiresAt,
