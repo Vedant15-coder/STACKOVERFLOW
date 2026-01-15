@@ -83,16 +83,21 @@ export const sendSMSOTP = async (
 
         console.log(`📱 Sending SMS OTP to ${formattedPhone}`);
 
-        // Initialize reCAPTCHA if not already done
-        if (!(window as any).recaptchaVerifier) {
-            initializeRecaptcha(auth);
-        }
+        // CRITICAL: Always clean up and create fresh reCAPTCHA for each attempt
+        // Firebase reCAPTCHA can only be used once per instance
+        cleanupRecaptcha();
+
+        // Wait a bit for cleanup to complete
+        await new Promise(resolve => setTimeout(resolve, 100));
+
+        // Create fresh reCAPTCHA verifier
+        const recaptchaVerifier = initializeRecaptcha(auth);
 
         // Send SMS OTP via Firebase
         const confirmationResult = await signInWithPhoneNumber(
             auth,
             formattedPhone,
-            (window as any).recaptchaVerifier
+            recaptchaVerifier
         );
 
         console.log("✅ SMS OTP sent successfully via Firebase");
