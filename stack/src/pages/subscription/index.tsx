@@ -11,7 +11,7 @@ import { useAuth } from "@/lib/AuthContext";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import Link from "next/link";
-import { MockRazorpayModal } from "@/components/MockRazorpayModal";
+import { MockRazorpayModal } from "@/components/RazorpayModal";
 
 interface SubscriptionPlan {
     name: string;
