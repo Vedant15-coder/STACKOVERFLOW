@@ -375,6 +375,15 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className = "" }) =
                             )}
                         </div>
 
+                        {/* reCAPTCHA Container - Will show checkbox here */}
+                        <div className="mb-4 flex justify-center">
+                            <div id="recaptcha-container-modal" style={{
+                                display: 'block',
+                                visibility: 'visible',
+                                minHeight: '78px'
+                            }}></div>
+                        </div>
+
                         <div className="flex gap-3">
                             <button
                                 onClick={() => {

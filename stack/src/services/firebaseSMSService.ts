@@ -44,7 +44,12 @@ export const initializeRecaptcha = async (authInstance: Auth): Promise<Recaptcha
     }
 
     // Ensure the container exists and is visible
-    const container = document.getElementById("recaptcha-container");
+    // Try modal container first, fallback to global container
+    let container = document.getElementById("recaptcha-container-modal");
+    if (!container) {
+        container = document.getElementById("recaptcha-container");
+    }
+
     if (!container) {
         console.error("❌ recaptcha-container element not found in DOM");
         throw new Error("reCAPTCHA container not found. Please refresh the page and try again.");
@@ -55,13 +60,14 @@ export const initializeRecaptcha = async (authInstance: Auth): Promise<Recaptcha
     container.style.visibility = 'visible';
 
     console.log("✅ reCAPTCHA script loaded, container ready, initializing verifier...");
+    console.log("📍 Using container:", container.id);
 
     try {
         // Create VISIBLE reCAPTCHA verifier for debugging
         // Change size to "normal" to see the reCAPTCHA checkbox
         const recaptchaVerifier = new RecaptchaVerifier(
             authInstance,
-            "recaptcha-container",
+            container.id, // Use the container ID we found
             {
                 size: "normal", // Changed from "invisible" to "normal" for debugging
                 callback: (response: any) => {
