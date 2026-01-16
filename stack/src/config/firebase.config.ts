@@ -1,6 +1,5 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "firebase/app-check";
 
 /**
  * Firebase Configuration for DevQuery Language OTP
@@ -29,24 +28,10 @@ if (!getApps().length) {
 }
 
 /**
- * Initialize Firebase App Check with reCAPTCHA Enterprise
- * Required for Phone Authentication to work with App Check enforcement
- */
-if (typeof window !== 'undefined') {
-    try {
-        initializeAppCheck(app, {
-            provider: new ReCaptchaEnterpriseProvider('6Lf9tEwsAAAAADkEBvg29wRSLemYVZlrxR579Rbe'),
-            isTokenAutoRefreshEnabled: true // Automatically refresh tokens
-        });
-        console.log("✅ Firebase App Check initialized with reCAPTCHA Enterprise");
-    } catch (error) {
-        console.warn("⚠️ App Check initialization error (may already be initialized):", error);
-    }
-}
-
-/**
  * Export Firebase Auth instance
- * Used for Phone Authentication
+ * Used for Phone Authentication with reCAPTCHA Enterprise
+ * Note: reCAPTCHA Enterprise key is configured in Google Cloud Console
+ * and automatically used by Firebase Phone Authentication
  */
 export const auth: Auth = getAuth(app);
 
