@@ -15,7 +15,16 @@ function App({ Component, pageProps }: AppProps) {
         <ToastContainer />
         <Component {...pageProps} />
         {/* Global reCAPTCHA container for Firebase Phone Authentication */}
-        <div id="recaptcha-container"></div>
+        <div
+          id="recaptcha-container"
+          style={{
+            display: 'block',
+            visibility: 'visible',
+            minHeight: '78px',
+            margin: '0 auto',
+            textAlign: 'center'
+          }}
+        ></div>
       </AuthProvider>
     </>
   );

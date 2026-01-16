@@ -57,33 +57,54 @@ export const initializeRecaptcha = async (authInstance: Auth): Promise<Recaptcha
     console.log("✅ reCAPTCHA script loaded, container ready, initializing verifier...");
 
     try {
-        // Create new invisible reCAPTCHA verifier with explicit render
+        // Create VISIBLE reCAPTCHA verifier for debugging
+        // Change size to "normal" to see the reCAPTCHA checkbox
         const recaptchaVerifier = new RecaptchaVerifier(
             authInstance,
             "recaptcha-container",
             {
-                size: "invisible",
+                size: "normal", // Changed from "invisible" to "normal" for debugging
                 callback: (response: any) => {
                     console.log("✅ reCAPTCHA verified successfully");
+                    console.log("Response token:", response);
                 },
                 "expired-callback": () => {
                     console.warn("⚠️ reCAPTCHA expired, please try again");
+                    alert("reCAPTCHA expired. Please try again.");
                 },
                 "error-callback": (error: any) => {
                     console.error("❌ reCAPTCHA error:", error);
+                    alert(`reCAPTCHA Error: ${JSON.stringify(error)}\n\nMake sure 'localhost' is added to Firebase Console → Authentication → Settings → Authorized domains`);
                 }
             }
         );
 
         // Explicitly render the reCAPTCHA
+        console.log("🔄 Rendering reCAPTCHA widget...");
         await recaptchaVerifier.render();
-        console.log("✅ reCAPTCHA rendered successfully");
+        console.log("✅ reCAPTCHA widget rendered successfully - you should see a checkbox");
 
         (window as any).recaptchaVerifier = recaptchaVerifier;
         return recaptchaVerifier;
-    } catch (error) {
+    } catch (error: any) {
         console.error("❌ Failed to initialize reCAPTCHA:", error);
-        throw new Error("Failed to initialize reCAPTCHA. Please refresh and try again.");
+        console.error("Error details:", {
+            code: error.code,
+            message: error.message,
+            stack: error.stack
+        });
+
+        // Provide helpful error message
+        let errorMessage = "Failed to initialize reCAPTCHA. ";
+        if (error.code === "auth/invalid-app-credential") {
+            errorMessage += "Invalid Firebase credentials. Check your firebase.config.ts";
+        } else if (error.message?.includes("reCAPTCHA")) {
+            errorMessage += "Make sure 'localhost' is added to Firebase Console → Authentication → Settings → Authorized domains";
+        } else {
+            errorMessage += error.message || "Please refresh and try again.";
+        }
+
+        throw new Error(errorMessage);
     }
 };
 
