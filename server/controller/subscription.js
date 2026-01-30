@@ -98,7 +98,7 @@ export const createPaymentOrder = async (req, res) => {
         const orderOptions = {
             amount: amount,
             currency: planDetails.currency,
-            receipt: `receipt_${userId}_${Date.now()}`,
+            receipt: `rcpt_${userId.toString().slice(-8)}_${Date.now()}`, // Max 40 chars
             notes: {
                 userId: userId.toString(),
                 plan: plan,
