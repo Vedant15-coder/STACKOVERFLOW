@@ -6,6 +6,8 @@ export default function Document() {
       <Head>
         {/* Google reCAPTCHA v3 - Required for Firebase Phone Authentication */}
         <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
+        {/* Razorpay Checkout - Required for payment processing */}
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
       </Head>
       <body className="antialiased">
         <Main />

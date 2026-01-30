@@ -127,8 +127,9 @@ const SubscriptionPage = () => {
     const fetchSubscriptionStatus = async () => {
         try {
             const token = localStorage.getItem("token");
+            const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
             const response = await fetch(
-                "http://localhost:5000/api/subscription/status",
+                `${API_URL}/api/subscription/status`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -162,8 +163,9 @@ const SubscriptionPage = () => {
         try {
             // Create payment order
             const token = localStorage.getItem("token");
+            const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
             const orderResponse = await fetch(
-                "http://localhost:5000/api/subscription/create-order",
+                `${API_URL}/api/subscription/create-order`,
                 {
                     method: "POST",
                     headers: {
@@ -202,8 +204,9 @@ const SubscriptionPage = () => {
     const handleMockPaymentSuccess = async (paymentData: any) => {
         try {
             const token = localStorage.getItem("token");
+            const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
             const verifyResponse = await fetch(
-                "http://localhost:5000/api/subscription/verify-payment",
+                `${API_URL}/api/subscription/verify-payment`,
                 {
                     method: "POST",
                     headers: {

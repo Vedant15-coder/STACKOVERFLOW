@@ -63,6 +63,15 @@ export const sendInvoiceEmail = async (email, invoiceData) => {
             year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Kolkata',
         });
 
+        // Get question limit for the plan
+        const questionLimits = {
+            'BRONZE': '5 questions per day',
+            'SILVER': '10 questions per day',
+            'GOLD': 'Unlimited questions per day'
+        };
+        const questionLimit = questionLimits[plan] || 'N/A';
+
+        // In development mode, log to console
         if (process.env.NODE_ENV === 'development') {
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
             console.log('📧 [DEV MODE] Subscription Invoice Email');
@@ -73,29 +82,61 @@ export const sendInvoiceEmail = async (email, invoiceData) => {
             console.log(`Invoice ID: ${invoiceId}`);
             console.log(`Start Date: ${formatDate(startDate)}`);
             console.log(`Expiry Date: ${formatDate(expiryDate)}`);
+            console.log(`Daily Limit: ${questionLimit}`);
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-            return { success: true };
         }
 
+        // Always send email (both dev and production)
         initializeSendGrid();
 
         const msg = {
             to: email,
             from: process.env.EMAIL_FROM || 'DevQuery <no-reply@devquery.com>',
             subject: `DevQuery Subscription Invoice – ${invoiceId}`,
-            html: `<html><body>
-        <h2>Subscription Invoice</h2>
-        <p>Dear ${userName},</p>
-        <p>Thank you for subscribing to DevQuery! Here are your details:</p>
-        <ul>
-          <li>Plan: ${plan}</li>
-          <li>Amount Paid: ₹${amount}</li>
-          <li>Invoice ID: ${invoiceId}</li>
-          <li>Start Date: ${formatDate(startDate)}</li>
-          <li>Expiry Date: ${formatDate(expiryDate)}</li>
-        </ul>
-        <p>Enjoy your benefits!</p>
-        <p>— The DevQuery Team</p>
+            html: `<html><body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+          <h2 style="color: #0066cc; border-bottom: 2px solid #0066cc; padding-bottom: 10px;">Subscription Invoice</h2>
+          <p>Dear <strong>${userName}</strong>,</p>
+          <p>Thank you for subscribing to DevQuery! Your payment has been successfully processed.</p>
+          
+          <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #0066cc;">Subscription Details</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;"><strong>Plan:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;">${plan}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;"><strong>Amount Paid:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;">₹${amount}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;"><strong>Invoice ID:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;">${invoiceId}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;"><strong>Start Date:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;">${formatDate(startDate)}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;"><strong>Expiry Date:</strong></td>
+                <td style="padding: 8px 0; border-bottom: 1px solid #ddd;">${formatDate(expiryDate)}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0;"><strong>Daily Question Limit:</strong></td>
+                <td style="padding: 8px 0; color: #0066cc; font-weight: bold;">${questionLimit}</td>
+              </tr>
+            </table>
+          </div>
+
+          <div style="background: #e8f4f8; padding: 15px; border-left: 4px solid #0066cc; margin: 20px 0;">
+            <p style="margin: 0;"><strong>🎉 Your subscription is now active!</strong></p>
+            <p style="margin: 5px 0 0 0;">You can now enjoy ${questionLimit.toLowerCase()} on DevQuery.</p>
+          </div>
+
+          <p>If you have any questions or need assistance, please don't hesitate to contact our support team.</p>
+          <p style="margin-top: 30px;">Best regards,<br><strong>The DevQuery Team</strong></p>
+        </div>
       </body></html>`,
         };
 
