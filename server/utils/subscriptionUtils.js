@@ -48,7 +48,7 @@ export const SUBSCRIPTION_PLANS = {
 
 /**
  * Check if payment is allowed based on IST time window
- * CRITICAL: Payments only allowed between 10:00 AM - 11:00 AM IST
+ * CRITICAL: Payments only allowed between 8:00 PM - 11:00 PM IST
  * 
  * @returns {boolean} True if current time is within payment window
  */
@@ -62,8 +62,8 @@ export const isPaymentAllowedIST = () => {
 
         const hour = istTime.getHours();
 
-        // Payment allowed only between 10:00 AM (inclusive) and 11:00 AM (exclusive)
-        return hour >= 10 && hour < 11;
+        // Payment allowed only between 8:00 PM (20:00) and 11:00 PM (23:00) inclusive
+        return hour >= 20 && hour < 23;
     } catch (error) {
         console.error("Error checking IST time:", error);
         // Fail secure: if we can't determine time, block payment

@@ -39,19 +39,19 @@ import {
  * Create payment order
  * POST /api/subscription/create-order
  * 
- * CRITICAL: Only allowed between 10:00 AM - 11:00 AM IST
+ * CRITICAL: Only allowed between 8:00 PM - 11:00 PM IST
  */
 export const createPaymentOrder = async (req, res) => {
     try {
         const { plan } = req.body;
         const userId = req.userId; // From JWT middleware
 
-        // CRITICAL: Check IST time window (10-11 AM)
+        // CRITICAL: Check IST time window (8-11 PM)
         if (!isPaymentAllowedIST()) {
             return res.status(403).json({
                 success: false,
                 message:
-                    "Payments are only allowed between 10:00 AM - 11:00 AM IST. Please try again during this time window.",
+                    "Payments are only allowed between 8:00 PM - 11:00 PM IST. Please try again during this time window.",
                 paymentWindowClosed: true,
             });
         }

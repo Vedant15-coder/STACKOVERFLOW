@@ -88,7 +88,7 @@ const SubscriptionPage = () => {
         }
     }, [user]);
 
-    // Check payment time window (10-11 AM IST)
+    // Check payment time window (8-11 PM IST)
     useEffect(() => {
         const checkPaymentWindow = () => {
             const now = new Date();
@@ -97,23 +97,28 @@ const SubscriptionPage = () => {
             );
             const hour = istTime.getHours();
 
-            const isOpen = hour >= 10 && hour < 11;
+            const isOpen = hour >= 20 && hour < 23;
             setIsPaymentWindowOpen(isOpen);
 
             // Calculate time until window opens/closes
             if (!isOpen) {
-                if (hour < 10) {
-                    const minutesUntil = (10 - hour) * 60 - istTime.getMinutes();
+                if (hour < 20) {
+                    const minutesUntil = (20 - hour) * 60 - istTime.getMinutes();
                     setTimeUntilWindow(
                         `Payment window opens in ${Math.floor(minutesUntil / 60)}h ${minutesUntil % 60
                         }m`
                     );
                 } else {
-                    setTimeUntilWindow(`Payment window opens tomorrow at 10:00 AM IST`);
+                    setTimeUntilWindow(`Payment window opens tomorrow at 8:00 PM IST`);
                 }
             } else {
+                const hoursRemaining = 22 - hour;
                 const minutesRemaining = 60 - istTime.getMinutes();
-                setTimeUntilWindow(`Payment window closes in ${minutesRemaining} minutes`);
+                if (hoursRemaining > 0) {
+                    setTimeUntilWindow(`Payment window closes in ${hoursRemaining}h ${minutesRemaining}m`);
+                } else {
+                    setTimeUntilWindow(`Payment window closes in ${minutesRemaining} minutes`);
+                }
             }
         };
 
@@ -149,7 +154,7 @@ const SubscriptionPage = () => {
     // Handle subscription upgrade (Mock Razorpay)
     const handleUpgrade = async (plan: string) => {
         if (!isPaymentWindowOpen) {
-            toast.error("Payments are only allowed between 10:00 AM - 11:00 AM IST");
+            toast.error("Payments are only allowed between 8:00 PM - 11:00 PM IST");
             return;
         }
 
@@ -310,7 +315,7 @@ const SubscriptionPage = () => {
                                 </p>
                                 <p className="text-sm text-yellow-700">{timeUntilWindow}</p>
                                 <p className="text-xs text-yellow-600 mt-1">
-                                    Payments are only allowed between 10:00 AM - 11:00 AM IST
+                                    Payments are only allowed between 8:00 PM - 11:00 PM IST
                                 </p>
                             </div>
                         </div>
@@ -484,7 +489,7 @@ const SubscriptionPage = () => {
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-gray-600">
-                                    Payments are only allowed between 10:00 AM - 11:00 AM IST.
+                                    Payments are only allowed between 8:00 PM - 11:00 PM IST.
                                     This is a strict requirement enforced by our system.
                                 </p>
                             </CardContent>
@@ -523,7 +528,7 @@ const SubscriptionPage = () => {
                             </CardHeader>
                             <CardContent>
                                 <p className="text-sm text-gray-600">
-                                    Yes! You can upgrade to any plan during the 10-11 AM IST
+                                    Yes! You can upgrade to any plan during the 8-11 PM IST
                                     payment window. Your new limits will be active immediately.
                                 </p>
                             </CardContent>
