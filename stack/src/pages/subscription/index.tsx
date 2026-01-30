@@ -189,11 +189,12 @@ const SubscriptionPage = () => {
                 return;
             }
 
-            console.log("🎭 Mock order created:", orderData);
+            console.log("🎭 Order created:", orderData);
 
-            // Open Mock Razorpay Modal
+            // Open Razorpay Modal with keyId from backend
             setCurrentOrderData({
                 ...orderData.order,
+                keyId: orderData.keyId, // Include Razorpay key from backend
                 plan: plan,
             });
             setShowMockPayment(true);
